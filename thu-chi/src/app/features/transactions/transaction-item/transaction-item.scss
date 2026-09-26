@@ -1,0 +1,104 @@
+:host {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'icon info amount' 'icon tools tools';
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: 2px;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+
+  @media (min-width: 560px) {
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas: 'icon info amount tools';
+  }
+
+  &:hover,
+  &:focus-within {
+    background: var(--surface-muted);
+  }
+}
+
+:host(.is-active) {
+  background: var(--accent-soft);
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cat) 16%, var(--surface));
+  font-size: 18px;
+}
+
+.info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.info__title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.info__meta {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+}
+
+.amount {
+  grid-area: amount;
+  color: var(--expense);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.amount--income {
+  color: var(--income);
+}
+
+.tools {
+  grid-area: tools;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.tool {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+  }
+}
+
+.tool--danger:hover,
+.tool--confirm {
+  color: var(--expense);
+}
+
+.tool--confirm {
+  background: var(--expense-soft);
+  font-weight: 600;
+}

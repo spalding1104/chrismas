@@ -1,0 +1,6 @@
+<button type="button" class="nav" (click)="shift(-1)" aria-label="Tháng trước">‹</button>
+<span class="label" aria-live="polite">{{ label() }}</span>
+<button type="button" class="nav" (click)="shift(1)" aria-label="Tháng sau">›</button>
+@if (!isCurrent()) {
+  <button type="button" class="today" (click)="goToday()">Tháng này</button>
+}

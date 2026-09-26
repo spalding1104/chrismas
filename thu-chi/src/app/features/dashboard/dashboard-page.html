@@ -1,0 +1,55 @@
+@if (store.isSample()) {
+  <div class="notice" role="status">
+    <span>Đây là dữ liệu mẫu để bạn xem thử. Xóa đi để bắt đầu ghi chép của riêng bạn.</span>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="store.clearSample()">Xóa dữ liệu mẫu</button>
+  </div>
+}
+
+<app-summary-overview
+  [income]="store.totalIncome()"
+  [expense]="store.totalExpense()"
+  [incomeCount]="incomeCount()"
+  [expenseCount]="expenseCount()"
+/>
+
+<div class="layout">
+  <div class="layout__side">
+    <app-card [heading]="editing() ? 'Sửa giao dịch' : 'Thêm giao dịch'">
+      <app-transaction-form
+        [editing]="editing()"
+        [defaultDate]="defaultDate()"
+        (saved)="onSave($event)"
+        (cancelled)="editing.set(null)"
+      />
+    </app-card>
+
+    <app-card heading="Theo danh mục">
+      <app-segmented-control
+        cardActions
+        ariaLabel="Xem theo"
+        [options]="breakdownOptions"
+        [(value)]="breakdownType"
+      />
+      <app-category-breakdown [items]="breakdownItems()" />
+    </app-card>
+  </div>
+
+  <app-card
+    class="layout__main"
+    heading="Giao dịch trong tháng"
+    [subheading]="store.monthTransactions().length + ' giao dịch'"
+  >
+    <app-segmented-control
+      cardActions
+      ariaLabel="Lọc giao dịch"
+      [options]="listFilterOptions"
+      [(value)]="listFilter"
+    />
+    <app-transaction-list
+      [transactions]="visibleTransactions()"
+      [activeId]="editing()?.id ?? null"
+      (edit)="editing.set($event)"
+      (remove)="onRemove($event)"
+    />
+  </app-card>
+</div>

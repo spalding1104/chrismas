@@ -1,0 +1,12 @@
+@if (heading()) {
+  <header class="card__header">
+    <div>
+      <h2 class="card__title">{{ heading() }}</h2>
+      @if (subheading()) {
+        <p class="card__subtitle">{{ subheading() }}</p>
+      }
+    </div>
+    <ng-content select="[cardActions]" />
+  </header>
+}
+<ng-content />

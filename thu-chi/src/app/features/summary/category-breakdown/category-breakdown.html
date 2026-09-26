@@ -1,0 +1,19 @@
+<ul class="list">
+  @for (item of items(); track item.category.id) {
+    <li class="row">
+      <div class="row__top">
+        <span class="row__name">
+          <span aria-hidden="true">{{ item.category.icon }}</span>
+          {{ item.category.name }}
+        </span>
+        <span class="row__value">
+          {{ item.total | vnd }}
+          <small>{{ item.percent | number: '1.0-0' }}%</small>
+        </span>
+      </div>
+      <app-progress-bar [value]="item.percent" [color]="item.category.color" />
+    </li>
+  } @empty {
+    <app-empty-state icon="📊" [message]="emptyMessage()" />
+  }
+</ul>

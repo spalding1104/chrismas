@@ -1,0 +1,83 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="form" novalidate>
+  <app-segmented-control
+    class="form__type"
+    formControlName="type"
+    [options]="typeOptions"
+    ariaLabel="Loại giao dịch"
+  />
+
+  <div class="field">
+    <label class="field__label" for="tx-amount">Số tiền (VND)</label>
+    <input
+      id="tx-amount"
+      class="input input--amount"
+      type="number"
+      inputmode="numeric"
+      min="0"
+      step="1000"
+      placeholder="0"
+      formControlName="amount"
+      [attr.aria-invalid]="showError('amount')"
+    />
+    <div class="quick">
+      @for (value of quickAmounts; track value) {
+        <button type="button" class="chip" (click)="addAmount(value)">+{{ value / 1000 }}k</button>
+      }
+    </div>
+    @if (showError('amount')) {
+      <p class="field__error">Nhập số tiền từ {{ minAmount | vnd }} trở lên.</p>
+    } @else if (amount()) {
+      <p class="field__hint">{{ amount() | vnd }}</p>
+    }
+  </div>
+
+  <fieldset class="field">
+    <legend class="field__label">Danh mục</legend>
+    <div class="categories" role="radiogroup" aria-label="Danh mục">
+      @for (category of categories(); track category.id) {
+        <button
+          type="button"
+          role="radio"
+          class="category"
+          [class.category--active]="category.id === selectedCategory()"
+          [attr.aria-checked]="category.id === selectedCategory()"
+          [style.--cat]="category.color"
+          (click)="selectCategory(category.id)"
+        >
+          <span aria-hidden="true">{{ category.icon }}</span>
+          {{ category.name }}
+        </button>
+      }
+    </div>
+  </fieldset>
+
+  <div class="row">
+    <div class="field">
+      <label class="field__label" for="tx-date">Ngày</label>
+      <input id="tx-date" class="input" type="date" formControlName="date" />
+      @if (showError('date')) {
+        <p class="field__error">Chọn ngày giao dịch.</p>
+      }
+    </div>
+    <div class="field">
+      <label class="field__label" for="tx-note">Ghi chú</label>
+      <input
+        id="tx-note"
+        class="input"
+        type="text"
+        maxlength="80"
+        placeholder="VD: Ăn trưa"
+        formControlName="note"
+      />
+    </div>
+  </div>
+
+  <div class="actions">
+    @if (isEditing()) {
+      <button type="button" class="btn btn--ghost" (click)="cancel()">Hủy</button>
+    }
+    <button type="submit" class="btn btn--primary">
+      {{ isEditing() ? 'Lưu thay đổi' : 'Thêm giao dịch' }}
+    </button>
+  </div>
+</form>
