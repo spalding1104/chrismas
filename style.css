@@ -1,0 +1,275 @@
+:root {
+  --night-1: #0b1633;
+  --night-2: #1b2b5a;
+  --red: #c62f3b;
+  --red-dark: #9b1f2a;
+  --gold: #f4c95d;
+  --paper: #fffaf0;
+  --ink: #3a2a1f;
+  --green: #1f7a3f;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  color: #fff;
+  background: radial-gradient(ellipse at 50% 120%, var(--night-2), var(--night-1) 70%);
+  background-color: var(--night-1);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#snow {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Header ---------- */
+.top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+.countdown { font-size: 14px; opacity: .85; }
+.countdown b { color: var(--gold); }
+.actions { display: flex; gap: 8px; }
+
+.icon-btn, .btn {
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background .2s, transform .1s;
+}
+.icon-btn:hover, .btn:hover { background: rgba(255,255,255,.18); }
+.icon-btn:active, .btn:active { transform: scale(.96); }
+.btn { background: var(--red); border-color: var(--red); font-weight: 600; }
+.btn:hover { background: var(--red-dark); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: #d8cbb5; }
+.btn.ghost:hover { background: #f3ead8; }
+
+/* ---------- Stage ---------- */
+.stage {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 16px 48px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 15px;
+  opacity: .85;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .4; } }
+
+/* ---------- Envelope ---------- */
+.envelope {
+  --w: min(86vw, 360px);
+  --h: calc(var(--w) * .62);
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  cursor: pointer;
+  perspective: 900px;
+  animation: float 4s ease-in-out infinite;
+  outline: none;
+}
+.envelope:focus-visible { filter: drop-shadow(0 0 8px var(--gold)); }
+@keyframes float { 50% { transform: translateY(-10px); } }
+
+.env-back {
+  position: absolute; inset: 0;
+  background: var(--red-dark);
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.45);
+}
+.letter {
+  position: absolute;
+  left: 6%; right: 6%;
+  top: 8%; height: 86%;
+  background: var(--paper);
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  padding-top: 14px;
+  color: var(--red);
+  font-family: "Dancing Script", cursive;
+  font-size: 28px;
+  transition: transform .8s cubic-bezier(.5,0,.3,1) .45s;
+  z-index: 1;
+}
+.env-front {
+  position: absolute; inset: 0;
+  background: var(--red);
+  border-radius: 8px;
+  clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+  z-index: 2;
+}
+.env-front::after {
+  /* gold trim along the pocket */
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), rgba(255,255,255,.12) 50%, transparent calc(50% + 1px)) left bottom / 50% 100% no-repeat,
+    linear-gradient(to top left, transparent calc(50% - 1px), rgba(255,255,255,.12) 50%, transparent calc(50% + 1px)) right bottom / 50% 100% no-repeat;
+}
+.env-flap {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 58%;
+  background: #b12733;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
+  transition: transform .5s ease, z-index 0s .25s;
+  z-index: 3;
+}
+.seal {
+  position: absolute;
+  left: 50%; top: 58%;
+  transform: translate(-50%, -50%);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffe08a, var(--gold) 60%, #b8892a);
+  display: grid; place-items: center;
+  font-size: 22px;
+  box-shadow: 0 3px 8px rgba(0,0,0,.35);
+  z-index: 4;
+  transition: opacity .3s, transform .3s;
+}
+
+.envelope.open { animation: none; cursor: default; }
+.envelope.open .seal { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+.envelope.open .env-flap { transform: rotateX(180deg); z-index: 0; }
+.envelope.open .letter { transform: translateY(-55%); }
+.envelope.gone {
+  transition: opacity .5s, transform .5s;
+  opacity: 0;
+  transform: scale(.85) translateY(30px);
+}
+
+/* ---------- Card ---------- */
+.card {
+  position: relative;
+  width: min(92vw, 440px);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 28px 24px 32px;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,.5);
+  border: 6px double var(--gold);
+  animation: pop .7s cubic-bezier(.2,1.3,.4,1) both;
+}
+.card::before, .card::after {
+  content: "❄";
+  position: absolute;
+  top: 12px;
+  font-size: 22px;
+  color: #9fc3e6;
+}
+.card::before { left: 16px; }
+.card::after { right: 16px; }
+@keyframes pop {
+  from { opacity: 0; transform: scale(.6) translateY(40px) rotate(-4deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+.tree { width: 150px; height: auto; display: block; margin: 0 auto 8px; }
+.star { fill: var(--gold); transform-origin: 100px 35px; animation: shine 1.6s ease-in-out infinite; }
+@keyframes shine { 50% { transform: scale(1.15); filter: drop-shadow(0 0 6px #ffe08a); } }
+.bulbs circle { animation: twinkle 1.2s ease-in-out infinite; }
+.bulbs circle:nth-child(2n) { animation-delay: .4s; }
+.bulbs circle:nth-child(3n) { animation-delay: .8s; }
+@keyframes twinkle { 50% { opacity: .25; } }
+
+.to { margin: 0; font-size: 16px; font-weight: 600; text-align: left; }
+.title {
+  margin: 4px 0 12px;
+  font-family: "Dancing Script", cursive;
+  font-size: clamp(40px, 11vw, 56px);
+  line-height: 1.1;
+  color: var(--red);
+}
+.msg {
+  margin: 0 0 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-line;
+  min-height: 3.4em;
+}
+.msg .caret { display: inline-block; width: 2px; height: 1em; background: var(--red); vertical-align: -2px; animation: blink .8s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.from {
+  margin: 0;
+  text-align: right;
+  font-family: "Dancing Script", cursive;
+  font-size: 24px;
+  color: var(--green);
+}
+.replay { animation: pop .5s .3s both; }
+
+/* ---------- Editor ---------- */
+dialog {
+  border: 0;
+  padding: 0;
+  border-radius: 16px;
+  width: min(92vw, 420px);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 30px 60px rgba(0,0,0,.5);
+}
+dialog::backdrop { background: rgba(5,10,30,.6); backdrop-filter: blur(3px); }
+.editor { position: relative; padding: 24px; display: grid; gap: 14px; }
+.editor h2 { margin: 0 0 4px; font-family: "Dancing Script", cursive; font-size: 32px; color: var(--red); }
+.editor label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.editor input, .editor textarea {
+  font: inherit;
+  font-weight: 400;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid #d8cbb5;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  resize: vertical;
+}
+.editor input:focus, .editor textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+.row { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.copied { margin: 0; min-height: 1.2em; font-size: 13px; color: var(--green); text-align: right; word-break: break-all; }
+.close {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  border: 0; border-radius: 50%;
+  background: transparent; color: var(--ink);
+  font-size: 18px; cursor: pointer;
+}
+.close:hover { background: #f3ead8; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
