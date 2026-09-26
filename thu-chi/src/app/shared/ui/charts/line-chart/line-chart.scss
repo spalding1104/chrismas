@@ -1,0 +1,127 @@
+@use '../../../styles/mixins' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    border-radius: var(--radius-sm);
+    outline: none;
+
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-width) var(--accent);
+    }
+}
+
+.legend {
+    @include legend;
+
+    i {
+        height: var(--space-0-5);
+    }
+}
+
+.frame {
+    position: relative;
+}
+
+svg {
+    display: block;
+    overflow: visible;
+    font-family: inherit;
+}
+
+.grid {
+    stroke: var(--grid);
+    stroke-width: 1;
+}
+
+.tick,
+.axis-title {
+    fill: var(--ink-muted);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+}
+
+.axis-title {
+    font-size: var(--text-xs);
+}
+
+.line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.marker-line,
+.crosshair {
+    stroke: var(--ink-muted);
+    stroke-width: 1;
+}
+
+.crosshair {
+    stroke: var(--ink);
+}
+
+.marker-label {
+    fill: var(--ink);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+}
+
+/* Chấm có viền màu nền để nổi lên khi đè lên đường. */
+.dot {
+    fill: var(--ink);
+    stroke: var(--surface);
+    stroke-width: 2;
+}
+
+.end-label {
+    fill: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+.hit {
+    fill: transparent;
+    cursor: crosshair;
+}
+
+.tip {
+    @include tooltip;
+
+    position: absolute;
+    top: 0;
+    transform: translateX(var(--space-3));
+}
+
+.tip--flip {
+    transform: translateX(calc(-100% - var(--space-3)));
+}
+
+.tip__title {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.tip__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+
+    i {
+        width: var(--swatch-size);
+        height: var(--space-0-5);
+        border-radius: var(--radius-2xs);
+    }
+
+    b {
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.tip__detail {
+    padding-top: var(--space-1);
+    border-top: 1px solid var(--border);
+}

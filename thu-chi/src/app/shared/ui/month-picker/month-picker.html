@@ -1,6 +1,63 @@
-<button type="button" class="nav" (click)="shift(-1)" aria-label="Tháng trước">‹</button>
-<span class="label" aria-live="polite">{{ label() }}</span>
-<button type="button" class="nav" (click)="shift(1)" aria-label="Tháng sau">›</button>
+<button type="button" class="nav" (click)="shift(-1)" aria-label="Tháng trước">
+    ‹
+</button>
+
+<div class="picker">
+    <button
+        #trigger
+        type="button"
+        class="label label--button"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="open()"
+        (click)="toggle()"
+    >
+        <span aria-live="polite">{{ label() }}</span>
+        <span class="caret" aria-hidden="true">▾</span>
+    </button>
+
+    @if (open()) {
+        <div class="panel" role="dialog" aria-label="Chọn tháng">
+            <div class="panel__head">
+                <button
+                    type="button"
+                    class="nav nav--sm"
+                    (click)="panelYear.set(panelYear() - 1)"
+                    aria-label="Năm trước"
+                >
+                    ‹
+                </button>
+                <span class="panel__year">{{ panelYear() }}</span>
+                <button
+                    type="button"
+                    class="nav nav--sm"
+                    (click)="panelYear.set(panelYear() + 1)"
+                    aria-label="Năm sau"
+                >
+                    ›
+                </button>
+            </div>
+
+            <div class="panel__grid">
+                @for (m of months(); track m.key) {
+                    <button
+                        type="button"
+                        class="month"
+                        [class.month--selected]="m.key === month()"
+                        [class.month--today]="m.key === thisMonth"
+                        [attr.aria-pressed]="m.key === month()"
+                        (click)="pick(m.key)"
+                    >
+                        {{ m.label }}
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<button type="button" class="nav" (click)="shift(1)" aria-label="Tháng sau">
+    ›
+</button>
 @if (!isCurrent()) {
-  <button type="button" class="today" (click)="goToday()">Tháng này</button>
+    <button type="button" class="today" (click)="goToday()">Tháng này</button>
 }

@@ -1,0 +1,71 @@
+<ul class="legend">
+    @for (s of series(); track s.id) {
+        <li><i [style.background]="s.color"></i>{{ s.label }}</li>
+    }
+</ul>
+
+<div class="chart" role="group" [attr.aria-label]="ariaLabel()">
+    <div class="y-axis" aria-hidden="true">
+        @for (t of ticks(); track t) {
+            <span [style.bottom.%]="pct(t)">{{ formatTick()(t) }}</span>
+        }
+    </div>
+
+    <div class="plot" [style.--groups]="groups().length">
+        @for (t of ticks(); track t) {
+            <i class="grid" [style.bottom.%]="pct(t)"></i>
+        }
+
+        @for (g of groups(); track g.id; let i = $index; let count = $count) {
+            <div
+                class="group"
+                tabindex="0"
+                [attr.aria-label]="describe(g)"
+                [class.group--active]="activeId() === g.id"
+                [class.group--dim]="activeId() && activeId() !== g.id"
+                (pointerenter)="activeId.set(g.id)"
+                (pointerleave)="activeId.set(null)"
+                (focus)="activeId.set(g.id)"
+                (blur)="activeId.set(null)"
+            >
+                @for (v of g.values; track $index) {
+                    <span
+                        class="bar"
+                        [style.height.%]="pct(v)"
+                        [style.min-height.px]="v > 0 ? 2 : 0"
+                        [style.background]="series()[$index].color"
+                    ></span>
+                }
+
+                @if (activeId() === g.id) {
+                    <div
+                        class="tip"
+                        [class.tip--start]="i < 2"
+                        [class.tip--end]="i >= count - 2"
+                        [style.bottom.%]="peak(g)"
+                        aria-hidden="true"
+                    >
+                        <span class="tip__title">{{ g.title }}</span>
+                        @for (s of series(); track s.id; let j = $index) {
+                            <span class="tip__row">
+                                <i [style.background]="s.color"></i>
+                                <b>{{ formatValue()(g.values[j]) }}</b>
+                                {{ s.label }}
+                            </span>
+                        }
+                        @if (g.detail) {
+                            <span class="tip__detail">{{ g.detail }}</span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <span></span>
+    <div class="x-axis" [style.--groups]="groups().length" aria-hidden="true">
+        @for (g of groups(); track g.id) {
+            <span>{{ g.label }}</span>
+        }
+    </div>
+</div>

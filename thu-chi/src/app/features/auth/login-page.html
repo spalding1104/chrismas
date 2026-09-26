@@ -1,0 +1,115 @@
+<section class="panel" aria-labelledby="auth-title">
+    <header class="panel__head">
+        <h2 id="auth-title" class="panel__title">
+            {{ mode() === 'login' ? 'Đăng nhập' : 'Tạo tài khoản' }}
+        </h2>
+        <p class="panel__subtitle">
+            Mỗi tài khoản có sổ thu chi riêng, chỉ bạn xem được.
+        </p>
+    </header>
+
+    <app-segmented-control
+        class="panel__mode"
+        ariaLabel="Chọn đăng nhập hoặc đăng ký"
+        [options]="modeOptions"
+        [(value)]="mode"
+    />
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form" novalidate>
+        <div class="field">
+            <label class="field__label" for="auth-email">Email</label>
+            <input
+                id="auth-email"
+                class="input"
+                type="email"
+                autocomplete="email"
+                inputmode="email"
+                formControlName="email"
+                [attr.aria-invalid]="invalid('email')"
+                [attr.aria-describedby]="
+                    invalid('email') ? 'auth-email-error' : null
+                "
+            />
+            @if (invalid('email')) {
+                <p id="auth-email-error" class="field__error">
+                    Nhập email hợp lệ, ví dụ ten@gmail.com.
+                </p>
+            }
+        </div>
+
+        <div class="field">
+            <label class="field__label" for="auth-password">Mật khẩu</label>
+            <div class="password">
+                <input
+                    id="auth-password"
+                    class="input"
+                    formControlName="password"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    [autocomplete]="
+                        mode() === 'login' ? 'current-password' : 'new-password'
+                    "
+                    [attr.aria-invalid]="
+                        invalid('password') || groupError('tooShort')
+                    "
+                    [attr.aria-describedby]="
+                        mode() === 'register' ? 'auth-password-hint' : null
+                    "
+                />
+                <button
+                    type="button"
+                    class="password__toggle"
+                    [attr.aria-pressed]="showPassword()"
+                    (click)="showPassword.set(!showPassword())"
+                >
+                    {{ showPassword() ? 'Ẩn' : 'Hiện' }}
+                </button>
+            </div>
+            @if (invalid('password')) {
+                <p class="field__error">Nhập mật khẩu.</p>
+            } @else if (groupError('tooShort')) {
+                <p class="field__error">
+                    Mật khẩu cần ít nhất {{ minPasswordLength }} ký tự.
+                </p>
+            } @else if (mode() === 'register') {
+                <p id="auth-password-hint" class="field__hint">
+                    Ít nhất {{ minPasswordLength }} ký tự.
+                </p>
+            }
+        </div>
+
+        @if (mode() === 'register') {
+            <div class="field">
+                <label class="field__label" for="auth-confirm">
+                    Nhập lại mật khẩu
+                </label>
+                <input
+                    id="auth-confirm"
+                    class="input"
+                    formControlName="confirm"
+                    autocomplete="new-password"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    [attr.aria-invalid]="groupError('mismatch')"
+                />
+                @if (groupError('mismatch')) {
+                    <p class="field__error">Mật khẩu nhập lại không khớp.</p>
+                }
+            </div>
+        }
+
+        @if (serverError(); as message) {
+            <p class="server-error" role="alert">{{ message }}</p>
+        }
+
+        <button
+            type="submit"
+            class="btn btn--primary"
+            [disabled]="submitting()"
+        >
+            @if (submitting()) {
+                Đang xử lý…
+            } @else {
+                {{ mode() === 'login' ? 'Đăng nhập' : 'Tạo tài khoản' }}
+            }
+        </button>
+    </form>
+</section>

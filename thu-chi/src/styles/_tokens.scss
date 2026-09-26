@@ -1,0 +1,147 @@
+// Design tokens — nguồn duy nhất cho màu, khoảng cách, bo góc, kích thước,
+// chữ, hiệu ứng và lớp. Component chỉ dùng var(--…), không viết cứng giá trị.
+// Đổi giao diện: sửa ở đây (và trong dark-tokens nếu là màu/bóng đổ).
+// `npm run lint:styles` báo lỗi khi có giá trị viết cứng ngoài file này.
+
+:root {
+    /* ---------- Màu nền & chữ ---------- */
+    --bg: #f3f5f4;
+    --surface: #ffffff;
+    --surface-muted: #eef1f0;
+    --border: #e1e6e4;
+    --ink: #1c2530;
+    --ink-muted: #5f6b76;
+
+    /* ---------- Màu nhấn & ngữ nghĩa ---------- */
+    --accent: #3a5bd9;
+    --accent-soft: #e8edfc;
+    --accent-hover: color-mix(in srgb, var(--accent) 88%, black);
+    --on-accent: #ffffff;
+    --income: #178a5d;
+    --income-soft: #e2f4ec;
+    --expense: #d2463d;
+    --expense-soft: #fbe7e5;
+    /* Nền mờ khi rê chuột lên vùng dữ liệu (cột biểu đồ…). */
+    --hover-wash: color-mix(in srgb, var(--ink) 6%, transparent);
+
+    /* ---------- Màu biểu đồ ----------
+       Thứ tự đã kiểm tra an toàn cho người mù màu: giữ nguyên thứ tự,
+       danh mục thứ 8 trở đi dùng --series-other. */
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --series-6: #008300;
+    --series-7: #4a3aa7;
+    --series-other: #9aa1ab;
+    --grid: #e8ecea;
+
+    /* ---------- Khoảng cách (padding, margin, gap) ---------- */
+    --space-0-5: 2px;
+    --space-1: 4px;
+    --space-1-5: 6px;
+    --space-2: 8px;
+    --space-2-5: 10px;
+    --space-3: 12px;
+    --space-3-5: 14px;
+    --space-4: 16px;
+    --space-4-5: 18px;
+    --space-5: 24px;
+    --space-6: 40px;
+
+    /* ---------- Bo góc ---------- */
+    --radius-2xs: 2px; /* ô màu chú thích */
+    --radius-xs: 4px; /* đầu cột biểu đồ */
+    --radius-sm: 8px; /* nút nhỏ, mục trong nhóm */
+    --radius-control: 10px; /* nút, ô nhập */
+    --radius-md: 12px; /* hộp nhỏ, ô icon lớn */
+    --radius-lg: 18px; /* card */
+    --radius-pill: 999px;
+
+    /* ---------- Kích thước ---------- */
+    --control-height: 36px;
+    --control-height-sm: 32px;
+    --icon-box-sm: 32px;
+    --icon-box-md: 40px;
+    --swatch-size: 10px;
+    --swatch-size-sm: 8px;
+    --focus-width: 2px;
+    --page-max-width: 1160px;
+    /* Khoảng cách từ đỉnh màn hình cho phần tử dính (dưới header). */
+    --sticky-offset: 88px;
+
+    /* ---------- Chữ ---------- */
+    --font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --text-2xs: 11px; /* nhãn trục biểu đồ */
+    --text-xs: 12px;
+    --text-sm: 14px;
+    --text-md: 15px;
+    --text-lg: 18px;
+    --text-xl: 22px;
+    --text-2xl: 26px;
+    --icon-size-xs: 11px; /* mũi tên ▾ */
+    --icon-size-sm: 16px;
+    --icon-size-md: 18px;
+    --icon-size-lg: 20px;
+    --icon-size-xl: 32px; /* hình minh họa ô trống */
+
+    /* ---------- Hiệu ứng ---------- */
+    --duration-instant: 0.1s;
+    --duration-fast: 0.15s;
+    --duration-slow: 0.4s;
+    /* Khi người dùng bật "giảm chuyển động" trong hệ điều hành. */
+    --duration-reduced: 0.01ms;
+    --ease: ease;
+    --opacity-dim: 0.4; /* làm mờ phần không được chọn */
+
+    /* ---------- Bóng đổ ---------- */
+    --shadow-sm: 0 1px 2px rgb(20 30 40 / 5%), 0 4px 16px rgb(20 30 40 / 4%);
+    --shadow-popover: var(--shadow-sm), 0 12px 32px rgb(20 30 40 / 12%);
+    --ring-soft: 0 0 0 3px var(--accent-soft);
+
+    /* ---------- Lớp (z-index) ---------- */
+    --z-tooltip: 2;
+    --z-sticky: 10;
+    --z-popover: 20;
+
+    color-scheme: light;
+}
+
+@mixin dark-tokens {
+    --bg: #12161b;
+    --surface: #1b2128;
+    --surface-muted: #242b33;
+    --border: #2e3640;
+    --ink: #e8ecef;
+    --ink-muted: #9aa5b0;
+    --accent: #7d97ff;
+    --accent-soft: #232c4a;
+    --on-accent: #0f1320;
+    --income: #4cc794;
+    --income-soft: #183a2d;
+    --expense: #ff7b72;
+    --expense-soft: #3d2224;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-other: #6f7883;
+    --grid: #28303a;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+    --shadow-popover: var(--shadow-sm), 0 12px 32px rgb(0 0 0 / 40%);
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        @include dark-tokens;
+    }
+}
+
+:root[data-theme='dark'] {
+    @include dark-tokens;
+}

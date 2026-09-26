@@ -1,0 +1,29 @@
+@use '../../shared/styles/mixins' as *;
+
+:host {
+    display: block;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.tabs {
+    @include segmented-track;
+}
+
+.tab {
+    @include segmented-item;
+
+    padding: var(--space-1-5) var(--space-4);
+    text-decoration: none;
+}
+
+.tab--active {
+    @include segmented-item-active;
+}

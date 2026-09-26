@@ -1,0 +1,166 @@
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.warning {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px dashed var(--expense);
+    border-radius: var(--radius-md);
+    background: var(--expense-soft);
+    font-size: var(--text-sm);
+}
+
+/* 4 chỉ số: 2×2 (hoặc 1 cột trên màn hẹp), không để 3 + 1 lẻ. */
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+
+    @include below(sm) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.kpi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+}
+
+.kpi__label {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+}
+
+.kpi__value {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.kpi__value--bad {
+    color: var(--expense);
+}
+
+.kpi__formula,
+.kpi__note {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+.kpi__formula {
+    font-family: var(--font-mono);
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.block__title {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+
+    th,
+    td {
+        padding: var(--space-2) var(--space-1-5);
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    th:first-child {
+        text-align: left;
+        font-weight: 500;
+    }
+
+    thead th {
+        color: var(--ink-muted);
+        font-size: var(--text-xs);
+        font-weight: 600;
+    }
+}
+
+.formula {
+    display: block;
+    color: var(--ink-muted);
+    font-size: var(--text-2xs);
+    font-weight: 400;
+}
+
+.row--subtotal {
+    th,
+    td {
+        font-weight: 600;
+    }
+}
+
+.row--result {
+    th,
+    td {
+        border-bottom: 0;
+        font-weight: 700;
+    }
+}
+
+.negative {
+    color: var(--expense);
+}
+
+.note {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}
+
+.target__goal {
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+.target__result {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+
+    dt {
+        color: var(--ink-muted);
+        font-size: var(--text-xs);
+    }
+
+    dd {
+        margin: 0;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+}

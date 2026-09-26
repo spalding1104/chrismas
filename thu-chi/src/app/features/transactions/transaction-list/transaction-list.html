@@ -1,24 +1,24 @@
 @for (group of groups(); track group.date) {
-  <section class="day">
-    <header class="day__header">
-      <h3 class="day__title">{{ group.date | dayLabel }}</h3>
-      <span class="day__net" [class.day__net--positive]="group.net > 0">{{
-        group.net | vnd: 'always'
-      }}</span>
-    </header>
-    <ul class="day__items">
-      @for (tx of group.items; track tx.id) {
-        <li>
-          <app-transaction-item
-            [transaction]="tx"
-            [active]="tx.id === activeId()"
-            (edit)="edit.emit($event)"
-            (remove)="remove.emit($event)"
-          />
-        </li>
-      }
-    </ul>
-  </section>
+    <section class="day">
+        <header class="day__header">
+            <h3 class="day__title">{{ group.date | dayLabel }}</h3>
+            <span class="day__net" [class.day__net--positive]="group.net > 0">{{
+                group.net | vnd: 'always'
+            }}</span>
+        </header>
+        <ul class="day__items">
+            @for (tx of group.items; track tx.id) {
+                <li>
+                    <app-transaction-item
+                        [transaction]="tx"
+                        [active]="tx.id === activeId()"
+                        (edit)="edit.emit($event)"
+                        (remove)="remove.emit($event)"
+                    />
+                </li>
+            }
+        </ul>
+    </section>
 } @empty {
-  <app-empty-state icon="🧾" [message]="emptyMessage()" />
+    <app-empty-state icon="🧾" [message]="emptyMessage()" />
 }

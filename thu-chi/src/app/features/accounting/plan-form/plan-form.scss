@@ -1,0 +1,184 @@
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+    /* Chừa chỗ cho chữ đơn vị ("đ / ly") nằm trong ô số tiền. */
+    --amount-unit-space: 72px;
+
+    display: block;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-3);
+}
+
+.field--wide {
+    grid-column: span 2;
+
+    @include below(sm) {
+        grid-column: auto;
+    }
+}
+
+.costs {
+    gap: var(--space-3);
+}
+
+/* Mỗi loại chi phí là một khối riêng: tiêu đề + tổng, danh sách, nút thêm. */
+.cost-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.cost-section__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: calc(var(--space-3) * -1) calc(var(--space-3) * -1) 0;
+    padding: var(--space-2-5) var(--space-3);
+    border-bottom: 1px solid var(--border);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--surface-muted);
+}
+
+.cost-section__title {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 700;
+}
+
+.cost-section__hint {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+.cost-section__total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+
+    span {
+        color: var(--ink-muted);
+        font-size: var(--text-xs);
+    }
+
+    b {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.cost-section__empty {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}
+
+.cost-section__add {
+    align-self: flex-start;
+}
+
+.cost-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Hai dòng: tên + nút; bên dưới là số tiền (kèm đơn vị). */
+.cost {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        'name actions'
+        'amount amount';
+    align-items: center;
+    gap: var(--space-1-5) var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+}
+
+.cost__name {
+    grid-area: name;
+}
+
+.cost__amount {
+    grid-area: amount;
+    position: relative;
+
+    .input {
+        padding-right: var(--amount-unit-space);
+    }
+}
+
+.cost__unit {
+    position: absolute;
+    top: 50%;
+    right: var(--space-3);
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.cost__actions {
+    grid-area: actions;
+    display: flex;
+    gap: var(--space-1);
+}
+
+.cost__action {
+    width: var(--control-height-sm);
+    height: var(--control-height-sm);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--surface-muted);
+        color: var(--ink);
+    }
+
+    @include focus-ring;
+}
+
+.cost__action--danger:hover {
+    background: var(--expense-soft);
+    color: var(--expense);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+}
+
+.actions__status {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}

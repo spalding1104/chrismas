@@ -1,76 +1,72 @@
+@use '../../../styles/mixins' as *;
+
 :host {
-  display: block;
+    /* Token riêng của biểu đồ. */
+    --track-height: 20px;
+    --segment-min-width: 4px;
+
+    display: block;
 }
 
 .track {
-  position: relative;
-  display: flex;
-  gap: 2px;
-  height: 20px;
+    position: relative;
+    display: flex;
+    gap: var(--space-0-5);
+    height: var(--track-height);
 }
 
 .seg {
-  flex-basis: 0;
-  min-width: 4px;
-  height: 100%;
-  cursor: default;
-  transition: opacity 0.15s;
+    flex-basis: 0;
+    min-width: var(--segment-min-width);
+    height: 100%;
+    cursor: default;
+    transition: opacity var(--duration-fast);
 
-  &:first-child {
-    border-radius: 4px 0 0 4px;
-  }
+    &:first-child {
+        border-radius: var(--radius-xs) 0 0 var(--radius-xs);
+    }
 
-  &:last-child {
-    border-radius: 0 4px 4px 0;
-  }
+    &:last-child {
+        border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+    }
 
-  &:only-child {
-    border-radius: 4px;
-  }
+    &:only-child {
+        border-radius: var(--radius-xs);
+    }
 
-  &:focus-visible {
-    outline: 2px solid var(--ink);
-    outline-offset: 2px;
-  }
+    &:focus-visible {
+        outline: var(--focus-width) solid var(--ink);
+        outline-offset: var(--focus-width);
+    }
 }
 
 .seg--dim {
-  opacity: 0.35;
+    opacity: var(--opacity-dim);
 }
 
 .tip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  font-size: var(--text-xs);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 2;
+    @include tooltip;
+
+    position: absolute;
+    bottom: calc(100% + var(--space-2));
+    transform: translateX(-50%);
 }
 
 .tip__title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    font-weight: 600;
+    color: var(--ink);
 
-  i {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-  }
+    i {
+        width: var(--swatch-size-sm);
+        height: var(--swatch-size-sm);
+        border-radius: var(--radius-2xs);
+    }
 }
 
 .tip__value {
-  color: var(--ink-muted);
-  font-variant-numeric: tabular-nums;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
 }

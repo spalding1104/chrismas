@@ -1,23 +1,38 @@
-<div class="track" role="list" [attr.aria-label]="ariaLabel()" (pointerleave)="active.set(null)">
-  @for (s of segments(); track s.id) {
-    <span
-      class="seg"
-      role="listitem"
-      tabindex="0"
-      [style.flex-grow]="s.value"
-      [style.background]="s.color"
-      [class.seg--dim]="active() && active()!.id !== s.id"
-      [attr.aria-label]="s.label + ': ' + formatValue()(s.value) + ', ' + percent(s.share)"
-      (pointermove)="point($event, s)"
-      (focus)="point($event, s)"
-      (blur)="active.set(null)"
-    ></span>
-  }
+<div
+    class="track"
+    role="list"
+    [attr.aria-label]="ariaLabel()"
+    (pointerleave)="active.set(null)"
+>
+    @for (s of segments(); track s.id) {
+        <span
+            class="seg"
+            role="listitem"
+            tabindex="0"
+            [style.flex-grow]="s.value"
+            [style.background]="s.color"
+            [class.seg--dim]="active() && active()!.id !== s.id"
+            [attr.aria-label]="
+                s.label +
+                ': ' +
+                formatValue()(s.value) +
+                ', ' +
+                percent(s.share)
+            "
+            (pointermove)="point($event, s)"
+            (focus)="point($event, s)"
+            (blur)="active.set(null)"
+        ></span>
+    }
 
-  @if (active(); as a) {
-    <div class="tip" [style.left.px]="tipX()" aria-hidden="true">
-      <span class="tip__title"><i [style.background]="a.color"></i>{{ a.label }}</span>
-      <span class="tip__value">{{ formatValue()(a.value) }} · {{ percent(a.share) }}</span>
-    </div>
-  }
+    @if (active(); as a) {
+        <div class="tip" [style.left.px]="tipX()" aria-hidden="true">
+            <span class="tip__title"
+                ><i [style.background]="a.color"></i>{{ a.label }}</span
+            >
+            <span class="tip__value"
+                >{{ formatValue()(a.value) }} · {{ percent(a.share) }}</span
+            >
+        </div>
+    }
 </div>

@@ -1,22 +1,31 @@
-<span class="icon" [style.--cat]="category().color" aria-hidden="true">{{ category().icon }}</span>
+<span class="icon" [style.--cat]="category().color" aria-hidden="true">{{
+    category().icon
+}}</span>
 <div class="info">
-  <span class="info__title">{{ transaction().note || category().name }}</span>
-  <span class="info__meta">{{ category().name }}</span>
+    <span class="info__title">{{ transaction().note || category().name }}</span>
+    <span class="info__meta">{{ category().name }}</span>
 </div>
 <span class="amount" [class.amount--income]="transaction().type === 'income'">
-  {{ signedAmount() | vnd: 'always' }}
+    {{ signedAmount() | vnd: 'always' }}
 </span>
 <div class="tools">
-  <button type="button" class="tool" (click)="edit.emit(transaction())" aria-label="Sửa giao dịch">
-    Sửa
-  </button>
-  <button
-    type="button"
-    class="tool tool--danger"
-    [class.tool--confirm]="confirming()"
-    (click)="onRemove()"
-    [attr.aria-label]="confirming() ? 'Bấm lần nữa để xóa' : 'Xóa giao dịch'"
-  >
-    {{ confirming() ? 'Chắc chắn?' : 'Xóa' }}
-  </button>
+    <button
+        type="button"
+        class="tool"
+        (click)="edit.emit(transaction())"
+        aria-label="Sửa giao dịch"
+    >
+        Sửa
+    </button>
+    <button
+        type="button"
+        class="tool tool--danger"
+        [class.tool--confirm]="confirming()"
+        (click)="onRemove()"
+        [attr.aria-label]="
+            confirming() ? 'Bấm lần nữa để xóa' : 'Xóa giao dịch'
+        "
+    >
+        {{ confirming() ? 'Chắc chắn?' : 'Xóa' }}
+    </button>
 </div>

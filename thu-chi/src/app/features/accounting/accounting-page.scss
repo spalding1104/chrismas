@@ -1,0 +1,89 @@
+@use '../../shared/styles/mixins' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.intro__title {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 700;
+}
+
+.intro__text {
+    margin: 0;
+    max-width: 72ch;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}
+
+.notice--error {
+    @include notice(expense);
+}
+
+.loading {
+    color: var(--ink-muted);
+}
+
+.empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.layout {
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
+
+    @include from(lg) {
+        grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+    }
+}
+
+.layout__side,
+.layout__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    min-width: 0;
+}
+
+.picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1-5);
+}
+
+.picker__row {
+    display: flex;
+    gap: var(--space-2);
+
+    .input {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.picker__delete:hover {
+    border-color: var(--expense);
+    color: var(--expense);
+}
+
+.examples {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1-5);
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}

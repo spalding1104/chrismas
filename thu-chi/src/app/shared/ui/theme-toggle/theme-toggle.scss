@@ -1,0 +1,24 @@
+@use '../../styles/mixins' as *;
+
+.toggle {
+    @include control;
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    height: var(--control-height);
+    padding-inline: var(--space-3);
+    font-size: var(--text-sm);
+}
+
+.toggle__icon {
+    width: 1em;
+    font-size: var(--icon-size-sm);
+    line-height: 1;
+    text-align: center;
+}
+
+.toggle__label {
+    min-width: 7ch;
+    text-align: left;
+}

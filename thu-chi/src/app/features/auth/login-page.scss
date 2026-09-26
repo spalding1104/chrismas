@@ -1,0 +1,101 @@
+@use '../../shared/styles/mixins' as *;
+
+:host {
+    --panel-max-width: 400px;
+
+    display: flex;
+    justify-content: center;
+    padding-block: var(--space-6);
+
+    @include below(md) {
+        padding-block: var(--space-3);
+    }
+}
+
+.panel {
+    @include surface-card;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 100%;
+    max-width: var(--panel-max-width);
+    padding: var(--space-5);
+}
+
+.panel__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.panel__title {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 700;
+}
+
+.panel__subtitle {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}
+
+.panel__mode {
+    display: flex;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.password {
+    position: relative;
+
+    .input {
+        padding-right: var(--space-6);
+    }
+}
+
+.password__toggle {
+    position: absolute;
+    top: 50%;
+    right: var(--space-1-5);
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transform: translateY(-50%);
+
+    &:hover {
+        color: var(--ink);
+        background: var(--surface-muted);
+    }
+
+    @include focus-ring;
+}
+
+.server-error {
+    margin: 0;
+    padding: var(--space-2-5) var(--space-3);
+    border-radius: var(--radius-control);
+    background: var(--expense-soft);
+    color: var(--expense);
+    font-size: var(--text-sm);
+}
+
+.btn {
+    width: 100%;
+
+    &:disabled {
+        opacity: var(--opacity-dim);
+        cursor: progress;
+    }
+}

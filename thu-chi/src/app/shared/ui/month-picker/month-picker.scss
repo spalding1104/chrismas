@@ -1,45 +1,143 @@
+@use '../../styles/mixins' as *;
+
 :host {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
 }
 
 .label {
-  min-width: 128px;
-  text-align: center;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+    min-width: 128px;
+    text-align: center;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
 .nav,
 .today {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-  transition: background 0.15s;
-
-  &:hover {
-    background: var(--surface-muted);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-  }
+    @include control;
 }
 
 .nav {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  font-size: 20px;
-  line-height: 1;
+    width: var(--control-height);
+    height: var(--control-height);
+    font-size: var(--icon-size-lg);
+    line-height: 1;
 }
 
 .today {
-  padding: 7px 12px;
-  border-radius: 10px;
-  font-size: var(--text-sm);
+    height: var(--control-height);
+    padding-inline: var(--space-3);
+    font-size: var(--text-sm);
+}
+
+/* Phần dưới chỉ dùng cho MonthPicker (YearPicker dùng chung file này). */
+
+.picker {
+    position: relative;
+}
+
+.label--button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1-5);
+    height: var(--control-height);
+    padding-inline: var(--space-2-5);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--duration-fast);
+
+    &:hover,
+    &[aria-expanded='true'] {
+        background: var(--surface-muted);
+    }
+
+    @include focus-ring;
+}
+
+.caret {
+    color: var(--ink-muted);
+    font-size: var(--icon-size-xs);
+}
+
+.panel {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: 50%;
+    z-index: var(--z-popover);
+    width: 272px;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-popover);
+    transform: translateX(-50%);
+
+    /* Màn hẹp: bộ chọn nằm bên trái nên canh trái để không tràn mép. */
+    @include below(md) {
+        left: 0;
+        transform: none;
+    }
+}
+
+.panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.nav--sm {
+    width: var(--control-height-sm);
+    height: var(--control-height-sm);
+    font-size: var(--icon-size-md);
+}
+
+.panel__year {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.panel__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-1-5);
+}
+
+.month {
+    padding: var(--space-2) var(--space-1);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: background var(--duration-fast);
+
+    &:hover {
+        background: var(--surface-muted);
+    }
+
+    @include focus-ring;
+}
+
+.month--today {
+    border-color: var(--accent);
+}
+
+.month--selected {
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+
+    &:hover {
+        background: var(--accent-hover);
+    }
 }

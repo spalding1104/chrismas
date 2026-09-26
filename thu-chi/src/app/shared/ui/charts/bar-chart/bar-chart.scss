@@ -1,179 +1,173 @@
-:host {
-  display: block;
-  container-type: inline-size;
-}
+@use '../../../styles/mixins' as *;
 
-.chart {
-  /* Cột cố định cho mọi hàng để lưới và độ dài cột thẳng hàng. */
-  --label-col: minmax(92px, 28%);
-  --value-col: 10.5rem;
+:host {
+    /* Token riêng của biểu đồ. */
+    --label-col: minmax(92px, 28%);
+    --value-col: 10.5rem;
+    --bar-thickness: 14px;
+    --axis-height: 18px;
+    --row-padding: 7px;
+
+    display: block;
+    container-type: inline-size;
 }
 
 .axis,
 .row {
-  display: grid;
-  grid-template-columns: var(--label-col) 1fr var(--value-col);
-  align-items: center;
-  column-gap: var(--space-3);
+    display: grid;
+    grid-template-columns: var(--label-col) 1fr var(--value-col);
+    align-items: center;
+    column-gap: var(--space-3);
 }
 
 .axis {
-  grid-template-areas: '. plot .';
+    grid-template-areas: '. plot .';
 }
 
 .row {
-  grid-template-areas: 'label plot value';
+    grid-template-areas: 'label plot value';
 }
 
 .label {
-  grid-area: label;
+    grid-area: label;
 }
 
 .plot,
 .axis__plot {
-  grid-area: plot;
+    grid-area: plot;
 }
 
 .value {
-  grid-area: value;
+    grid-area: value;
 }
 
 /* Màn hẹp: nhãn + giá trị một dòng, cột chạy hết chiều ngang bên dưới. */
 @container (max-width: 480px) {
-  .axis,
-  .row {
-    grid-template-columns: 1fr auto;
-    row-gap: 6px;
-  }
-
-  .axis {
-    grid-template-areas: 'plot plot';
-
-    > span:not(.axis__plot) {
-      display: none;
+    .axis,
+    .row {
+        grid-template-columns: 1fr auto;
+        row-gap: var(--space-1-5);
     }
-  }
 
-  .row {
-    grid-template-areas:
-      'label value'
-      'plot plot';
-  }
+    .axis {
+        grid-template-areas: 'plot plot';
 
-  .grid {
-    top: -4px;
-    bottom: -4px;
-  }
+        > span:not(.axis__plot) {
+            display: none;
+        }
+    }
+
+    .row {
+        grid-template-areas:
+            'label value'
+            'plot plot';
+    }
+
+    .grid {
+        top: calc(var(--space-1) * -1);
+        bottom: calc(var(--space-1) * -1);
+    }
 }
 
 .axis__plot {
-  position: relative;
-  height: 18px;
+    position: relative;
+    height: var(--axis-height);
 }
 
 .axis__tick {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  color: var(--ink-muted);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    color: var(--ink-muted);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
 
-  &:first-child {
-    transform: none;
-  }
+    &:first-child {
+        transform: none;
+    }
 }
 
 .axis__tick--end {
-  transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .row {
-  padding-block: 7px;
-  border-radius: 8px;
-  outline: none;
-  transition: opacity 0.15s;
+    padding-block: var(--row-padding);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: opacity var(--duration-fast);
 
-  &:focus-visible {
-    box-shadow: 0 0 0 2px var(--accent);
-  }
+    &:focus-visible {
+        box-shadow: 0 0 0 var(--focus-width) var(--accent);
+    }
 }
 
 .row--dim {
-  opacity: 0.45;
+    opacity: var(--opacity-dim);
 }
 
 .label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+    min-width: 0;
+    font-size: var(--text-sm);
 }
 
 .label__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .plot {
-  position: relative;
-  height: 14px;
+    position: relative;
+    height: var(--bar-thickness);
 }
 
+/* Đường lưới kéo dài qua phần đệm trên/dưới của hàng. */
 .grid {
-  position: absolute;
-  top: -7px;
-  bottom: -7px;
-  width: 1px;
-  background: var(--grid);
+    position: absolute;
+    top: calc(var(--row-padding) * -1);
+    bottom: calc(var(--row-padding) * -1);
+    width: 1px;
+    background: var(--grid);
 }
 
 .bar {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  min-width: 2px;
-  border-radius: 0 4px 4px 0;
-  transition: width 0.4s ease;
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    min-width: var(--space-0-5);
+    border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+    transition: width var(--duration-slow) var(--ease);
 }
 
 .tip {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  color: var(--ink-muted);
-  font-size: var(--text-xs);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 2;
+    @include tooltip;
 
-  b {
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
+    position: absolute;
+    bottom: calc(100% + var(--space-1-5));
+    transform: translateX(-50%);
+
+    b {
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+    }
 }
 
 .value {
-  text-align: right;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+    text-align: right;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 
-  small {
-    display: inline-block;
-    min-width: 3.2ch;
-    margin-left: 4px;
-    color: var(--ink-muted);
-    font-weight: 500;
-  }
+    small {
+        display: inline-block;
+        min-width: 3.2ch;
+        margin-left: var(--space-1);
+        color: var(--ink-muted);
+        font-weight: 500;
+    }
 }

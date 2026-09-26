@@ -1,0 +1,259 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="form" novalidate>
+    <div class="row">
+        <div class="field field--wide">
+            <div class="field__head">
+                <label class="field__label" for="plan-name"
+                    >Tên phương án</label
+                >
+                <app-info-tip label="Tên phương án" [text]="help.name" />
+            </div>
+            <input
+                id="plan-name"
+                class="input"
+                formControlName="name"
+                [attr.aria-invalid]="invalid('name')"
+            />
+            @if (invalid('name')) {
+                <p class="field__error">Nhập tên phương án.</p>
+            }
+        </div>
+        <div class="field">
+            <div class="field__head">
+                <label class="field__label" for="plan-unit">Đơn vị tính</label>
+                <app-info-tip label="Đơn vị tính" [text]="help.unitLabel" />
+            </div>
+            <input
+                id="plan-unit"
+                class="input"
+                formControlName="unitLabel"
+                placeholder="sp, kg, ổ…"
+                [attr.aria-invalid]="invalid('unitLabel')"
+            />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <div class="field__head">
+                <label class="field__label" for="plan-price">
+                    Giá bán / {{ value()?.unitLabel }} (p)
+                </label>
+                <app-info-tip label="Giá bán" [text]="help.unitPrice" />
+            </div>
+            <input
+                id="plan-price"
+                class="input"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                formControlName="unitPrice"
+                [attr.aria-invalid]="invalid('unitPrice')"
+            />
+            <p class="field__hint">{{ value()?.unitPrice | vnd }}</p>
+        </div>
+        <div class="field">
+            <div class="field__head">
+                <label class="field__label" for="plan-volume">
+                    Sản lượng tiêu thụ (Q)
+                </label>
+                <app-info-tip label="Sản lượng tiêu thụ" [text]="help.volume" />
+            </div>
+            <input
+                id="plan-volume"
+                class="input"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                formControlName="volume"
+                [attr.aria-invalid]="invalid('volume')"
+            />
+            <p class="field__hint">{{ value()?.unitLabel }} trong kỳ</p>
+        </div>
+    </div>
+
+    <fieldset class="field costs">
+        <legend class="field__label field__head">
+            Chi phí theo cách ứng xử
+            <app-info-tip
+                label="Chi phí theo cách ứng xử"
+                [text]="help.costs"
+            />
+        </legend>
+        @for (section of sections(); track section.behavior) {
+            <section
+                class="cost-section"
+                [attr.aria-labelledby]="'cost-section-' + section.behavior"
+            >
+                <header class="cost-section__head">
+                    <div>
+                        <h4
+                            class="cost-section__title"
+                            [id]="'cost-section-' + section.behavior"
+                        >
+                            {{ section.title }}
+                        </h4>
+                        <p class="cost-section__hint">{{ section.hint }}</p>
+                    </div>
+                    <div class="cost-section__total">
+                        <span>{{ section.totalLabel }}</span>
+                        <b>{{ section.total | vnd }}</b>
+                    </div>
+                </header>
+
+                @if (section.count) {
+                    <ul class="cost-list" formArrayName="costItems">
+                        @for (
+                            item of costItems.controls;
+                            track item.controls.id.value;
+                            let i = $index
+                        ) {
+                            @if (
+                                item.controls.behavior.value ===
+                                section.behavior
+                            ) {
+                                <li class="cost" [formGroupName]="i">
+                                    <input
+                                        class="input cost__name"
+                                        formControlName="name"
+                                        placeholder="Tên khoản chi phí"
+                                        [attr.aria-label]="
+                                            section.title + ': tên khoản'
+                                        "
+                                    />
+                                    <label class="cost__amount">
+                                        <input
+                                            class="input"
+                                            type="number"
+                                            min="0"
+                                            inputmode="decimal"
+                                            formControlName="amount"
+                                            [attr.aria-label]="
+                                                'Số tiền ' +
+                                                (item.controls.name.value ||
+                                                    'khoản chi phí')
+                                            "
+                                            [attr.aria-invalid]="
+                                                item.controls.amount.invalid
+                                            "
+                                        />
+                                        <span class="cost__unit">{{
+                                            section.unit
+                                        }}</span>
+                                    </label>
+                                    <div class="cost__actions">
+                                        <button
+                                            type="button"
+                                            class="cost__action"
+                                            [title]="
+                                                'Chuyển sang ' +
+                                                section.otherTitle
+                                            "
+                                            [attr.aria-label]="
+                                                'Chuyển ' +
+                                                (item.controls.name.value ||
+                                                    'khoản này') +
+                                                ' sang ' +
+                                                section.otherTitle
+                                            "
+                                            (click)="toggleBehavior(i)"
+                                        >
+                                            ⇄
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="cost__action cost__action--danger"
+                                            title="Xóa khoản chi phí"
+                                            [attr.aria-label]="
+                                                'Xóa ' +
+                                                (item.controls.name.value ||
+                                                    'khoản chi phí')
+                                            "
+                                            (click)="removeCost(i)"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                } @else {
+                    <p class="cost-section__empty">{{ section.empty }}</p>
+                }
+
+                <button
+                    type="button"
+                    class="btn btn--ghost btn--sm cost-section__add"
+                    (click)="addCost(section.behavior)"
+                >
+                    + Thêm {{ section.shortTitle }}
+                </button>
+            </section>
+        }
+    </fieldset>
+
+    <div class="row">
+        <div class="field">
+            <div class="field__head">
+                <label class="field__label" for="plan-tax">
+                    Thuế suất TNDN (t, %)
+                </label>
+                <app-info-tip label="Thuế suất TNDN" [text]="help.taxRate" />
+            </div>
+            <input
+                id="plan-tax"
+                class="input"
+                type="number"
+                min="0"
+                max="100"
+                formControlName="taxRate"
+                [attr.aria-invalid]="invalid('taxRate')"
+            />
+            @if (invalid('taxRate')) {
+                <p class="field__error">Từ 0 đến 100.</p>
+            }
+        </div>
+        <div class="field">
+            <div class="field__head">
+                <label class="field__label" for="plan-target">
+                    Lợi nhuận mục tiêu
+                </label>
+                <app-info-tip
+                    label="Lợi nhuận mục tiêu"
+                    [text]="help.targetProfit"
+                />
+            </div>
+            <input
+                id="plan-target"
+                class="input"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                placeholder="Không bắt buộc"
+                formControlName="targetProfit"
+                [attr.aria-invalid]="invalid('targetProfit')"
+            />
+            <select
+                class="input"
+                formControlName="targetAfterTax"
+                aria-label="Lợi nhuận mục tiêu là trước hay sau thuế"
+            >
+                <option [ngValue]="true">sau thuế</option>
+                <option [ngValue]="false">trước thuế</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="actions">
+        @if (unsaved()) {
+            <span class="actions__status">Có thay đổi chưa lưu</span>
+        }
+        <button
+            type="submit"
+            class="btn btn--primary"
+            [disabled]="saving() || !unsaved()"
+        >
+            {{ saving() ? 'Đang lưu…' : 'Lưu phương án' }}
+        </button>
+    </div>
+</form>

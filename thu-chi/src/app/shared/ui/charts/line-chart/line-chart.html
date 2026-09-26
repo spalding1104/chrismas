@@ -1,0 +1,149 @@
+<ul class="legend" aria-hidden="true">
+    @for (s of series(); track s.id) {
+        <li><i [style.background]="s.color"></i>{{ s.label }}</li>
+    }
+</ul>
+
+<div class="frame">
+    @if (width() > 0) {
+        <svg
+            [attr.width]="width()"
+            [attr.height]="height"
+            aria-hidden="true"
+            (pointermove)="onPointerMove($event)"
+            (pointerleave)="hoverX.set(null)"
+        >
+            @for (t of yTicks(); track t) {
+                <line
+                    class="grid"
+                    [attr.x1]="m.left"
+                    [attr.x2]="m.left + plotW()"
+                    [attr.y1]="sy(t)"
+                    [attr.y2]="sy(t)"
+                />
+                <text
+                    class="tick"
+                    text-anchor="end"
+                    dominant-baseline="middle"
+                    [attr.x]="m.left - 8"
+                    [attr.y]="sy(t)"
+                >
+                    {{ formatYTick()(t) }}
+                </text>
+            }
+            @for (t of xTicks(); track t) {
+                <text
+                    class="tick"
+                    text-anchor="middle"
+                    [attr.x]="sx(t)"
+                    [attr.y]="m.top + plotH + 18"
+                >
+                    {{ formatXTick()(t) }}
+                </text>
+            }
+            @if (xLabel()) {
+                <text
+                    class="axis-title"
+                    text-anchor="middle"
+                    [attr.x]="m.left + plotW() / 2"
+                    [attr.y]="height - 4"
+                >
+                    {{ xLabel() }}
+                </text>
+            }
+
+            @for (mk of markerLabels(); track mk.id) {
+                <line
+                    class="marker-line"
+                    [attr.x1]="mk.px"
+                    [attr.x2]="mk.px"
+                    [attr.y1]="mk.y + 4"
+                    [attr.y2]="m.top + plotH"
+                />
+                <text
+                    class="marker-label"
+                    text-anchor="middle"
+                    [attr.x]="mk.px"
+                    [attr.y]="mk.y"
+                >
+                    {{ mk.label }}
+                </text>
+            }
+
+            @for (p of paths(); track p.id) {
+                <path class="line" [attr.d]="p.d" [attr.stroke]="p.color" />
+            }
+
+            @for (mk of markers(); track mk.id) {
+                @if (mk.y !== undefined) {
+                    <circle
+                        class="dot"
+                        r="5"
+                        [attr.cx]="sx(mk.x)"
+                        [attr.cy]="sy(mk.y)"
+                    />
+                }
+            }
+
+            @for (l of endLabels(); track l.id) {
+                <text
+                    class="end-label"
+                    dominant-baseline="middle"
+                    [attr.x]="m.left + plotW() + 8"
+                    [attr.y]="l.y"
+                >
+                    {{ l.label }}
+                </text>
+            }
+
+            @if (tooltip(); as tip) {
+                <line
+                    class="crosshair"
+                    [attr.x1]="tip.left"
+                    [attr.x2]="tip.left"
+                    [attr.y1]="m.top"
+                    [attr.y2]="m.top + plotH"
+                />
+                @for (row of tip.rows; track row.id) {
+                    @if (row.cy !== null) {
+                        <circle
+                            class="dot"
+                            r="4"
+                            [attr.cx]="tip.left"
+                            [attr.cy]="row.cy"
+                            [attr.fill]="row.color"
+                        />
+                    }
+                }
+            }
+
+            <rect
+                class="hit"
+                [attr.x]="m.left"
+                [attr.y]="m.top"
+                [attr.width]="plotW()"
+                [attr.height]="plotH"
+            />
+        </svg>
+    }
+
+    @if (tooltip(); as tip) {
+        <div
+            class="tip"
+            [class.tip--flip]="tip.flip"
+            [style.left.px]="tip.left"
+            aria-live="polite"
+        >
+            <span class="tip__title">{{ tip.title }}</span>
+            @for (row of tip.rows; track row.id) {
+                <span class="tip__row">
+                    <i [style.background]="row.color"></i>
+                    <b>{{ row.value }}</b> {{ row.label }}
+                </span>
+            }
+            @if (tip.detail) {
+                <span class="tip__detail">{{ tip.detail }}</span>
+            }
+        </div>
+    }
+</div>

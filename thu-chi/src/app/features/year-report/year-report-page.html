@@ -1,0 +1,99 @@
+<app-summary-overview
+    [income]="store.yearIncome()"
+    [expense]="store.yearExpense()"
+    [incomeCount]="incomeCount()"
+    [expenseCount]="expenseCount()"
+/>
+
+<app-card
+    heading="Thu chi theo tháng"
+    [subheading]="'Năm ' + store.selectedYear()"
+>
+    @if (hasData()) {
+        <app-column-chart
+            [series]="series"
+            [groups]="groups()"
+            [formatValue]="formatValue"
+            [formatTick]="formatTick"
+            ariaLabel="Thu và chi theo từng tháng"
+        />
+    } @else {
+        <app-empty-state
+            icon="📅"
+            message="Chưa có giao dịch nào trong năm này."
+        />
+    }
+</app-card>
+
+<div class="layout">
+    <app-card
+        heading="Chi tiết từng tháng"
+        subheading="Bấm vào một tháng để xem giao dịch"
+    >
+        <div class="table-scroll">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Tháng</th>
+                        <th scope="col">Thu</th>
+                        <th scope="col">Chi</th>
+                        <th scope="col">Còn lại</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (m of months(); track m.month) {
+                        <tr [class.row--empty]="m.empty">
+                            <th scope="row">
+                                <button
+                                    type="button"
+                                    class="month-link"
+                                    (click)="openMonth(m.month)"
+                                >
+                                    {{ m.label }}
+                                </button>
+                            </th>
+                            @if (m.empty) {
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            } @else {
+                                <td>{{ m.income | vnd }}</td>
+                                <td>{{ m.expense | vnd }}</td>
+                                <td [class.negative]="m.balance < 0">
+                                    {{ m.balance | vnd }}
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="row">Cả năm</th>
+                        <td>{{ store.yearIncome() | vnd }}</td>
+                        <td>{{ store.yearExpense() | vnd }}</td>
+                        <td
+                            [class.negative]="
+                                store.yearIncome() < store.yearExpense()
+                            "
+                        >
+                            {{ store.yearIncome() - store.yearExpense() | vnd }}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </app-card>
+
+    <app-card heading="Danh mục cả năm" [subheading]="breakdownSubheading()">
+        <app-segmented-control
+            cardActions
+            ariaLabel="Xem theo"
+            [options]="breakdownOptions"
+            [(value)]="breakdownType"
+        />
+        <app-category-chart
+            [items]="breakdownItems()"
+            emptyMessage="Chưa có dữ liệu cho năm này."
+        />
+    </app-card>
+</div>

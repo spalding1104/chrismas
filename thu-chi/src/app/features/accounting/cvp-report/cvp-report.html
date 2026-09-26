@@ -1,0 +1,168 @@
+@let r = result();
+
+@if (noBreakEven()) {
+    <p class="warning" role="status">
+        Giá bán ({{ r.unitPrice | vnd }}) không lớn hơn biến phí đơn vị ({{
+            r.unitVariableCost | vnd
+        }}): mỗi {{ unitLabel() }} bán ra không bù được định phí, nên
+        <b>không có điểm hòa vốn</b>. Cần tăng giá bán hoặc giảm biến phí.
+    </p>
+}
+
+<div class="kpis">
+    <section class="kpi">
+        <h3 class="kpi__label">Sản lượng hòa vốn</h3>
+        <p class="kpi__value">
+            {{ r.breakEvenUnits === null ? '—' : quantity(r.breakEvenUnits) }}
+        </p>
+        <p class="kpi__formula">= F / (p − v)</p>
+        @if (
+            r.breakEvenUnits !== null && minimumUnits(r.breakEvenUnits);
+            as min
+        ) {
+            <p class="kpi__note">Bán tối thiểu {{ quantity(min) }}</p>
+        }
+    </section>
+
+    <section class="kpi">
+        <h3 class="kpi__label">Doanh thu hòa vốn</h3>
+        <p class="kpi__value">
+            {{ r.breakEvenRevenue === null ? '—' : (r.breakEvenRevenue | vnd) }}
+        </p>
+        <p class="kpi__formula">= F / tỷ lệ SDĐP</p>
+    </section>
+
+    <section class="kpi">
+        <h3 class="kpi__label">Số dư an toàn</h3>
+        <p
+            class="kpi__value"
+            [class.kpi__value--bad]="(r.marginOfSafety ?? 0) < 0"
+        >
+            {{ r.marginOfSafety === null ? '—' : (r.marginOfSafety | vnd) }}
+        </p>
+        <p class="kpi__formula">= Doanh thu − Doanh thu hòa vốn</p>
+        @if (r.marginOfSafetyRatio !== null) {
+            <p class="kpi__note">
+                {{ ratio(r.marginOfSafetyRatio) }} doanh thu
+                {{
+                    r.marginOfSafetyRatio >= 0
+                        ? '(doanh thu giảm quá mức này sẽ lỗ)'
+                        : '(đang lỗ)'
+                }}
+            </p>
+        }
+    </section>
+
+    <section class="kpi">
+        <h3 class="kpi__label">Đòn bẩy hoạt động (DOL)</h3>
+        <p class="kpi__value">
+            {{
+                r.operatingLeverage === null ? '—' : times(r.operatingLeverage)
+            }}
+        </p>
+        <p class="kpi__formula">= SDĐP / LN trước thuế</p>
+        @if (r.operatingLeverage !== null) {
+            <p class="kpi__note">
+                Doanh thu tăng 10% → lợi nhuận tăng
+                {{ ratio((r.operatingLeverage * 10) / 100) }}
+            </p>
+        } @else {
+            <p class="kpi__note">Chỉ tính khi đang có lãi</p>
+        }
+    </section>
+</div>
+
+<section class="block">
+    <h3 class="block__title">Báo cáo kết quả kinh doanh theo số dư đảm phí</h3>
+    <div class="table-scroll">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Chỉ tiêu</th>
+                    <th scope="col">Tổng</th>
+                    <th scope="col">/ {{ unitLabel() }}</th>
+                    <th scope="col">% DT</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of rows(); track row.label) {
+                    <tr [class]="row.kind ? 'row--' + row.kind : ''">
+                        <th scope="row">
+                            {{ row.label }}
+                            <span class="formula">{{ row.formula }}</span>
+                        </th>
+                        <td [class.negative]="row.total < 0">
+                            {{ row.total | vnd }}
+                        </td>
+                        <td>
+                            {{
+                                row.perUnit === null ? '—' : (row.perUnit | vnd)
+                            }}
+                        </td>
+                        <td>
+                            {{ row.ratio === null ? '—' : ratio(row.ratio) }}
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="note">
+        Tỷ lệ số dư đảm phí =
+        <b>{{
+            r.contributionRatio === null ? '—' : ratio(r.contributionRatio)
+        }}</b>
+        (mỗi 100đ doanh thu tăng thêm đóng góp
+        {{
+            r.contributionRatio === null
+                ? '—'
+                : (r.contributionRatio * 100 | vnd)
+        }}
+        vào bù định phí và lợi nhuận).
+    </p>
+</section>
+
+@if (r.target; as t) {
+    <section class="block target">
+        <h3 class="block__title">Lợi nhuận mục tiêu</h3>
+        <p class="target__goal">
+            Muốn lãi
+            <b>{{ targetProfit() | vnd }}</b>
+            {{ targetAfterTax() ? 'sau thuế' : 'trước thuế' }}
+            @if (targetAfterTax()) {
+                (tức {{ t.profitBeforeTax | vnd }} trước thuế = LN sau thuế / (1
+                − {{ taxRate() }}%))
+            }
+        </p>
+        @if (t.units !== null) {
+            <dl class="target__result">
+                <div>
+                    <dt>Cần bán</dt>
+                    <dd>{{ quantity(t.units) }}</dd>
+                </div>
+                <div>
+                    <dt>Doanh thu cần đạt</dt>
+                    <dd>{{ t.revenue | vnd }}</dd>
+                </div>
+                <div>
+                    <dt>So với kế hoạch</dt>
+                    <dd [class.negative]="t.units > r.volume">
+                        {{
+                            t.units > r.volume
+                                ? 'thiếu ' + quantity(t.units - r.volume)
+                                : 'đã đạt, dư ' + quantity(r.volume - t.units)
+                        }}
+                    </dd>
+                </div>
+            </dl>
+            <p class="kpi__formula">
+                Sản lượng cần bán = (F + LN trước thuế mục tiêu) / (p − v)
+            </p>
+        } @else {
+            <p class="warning">
+                Không đạt được: giá bán phải lớn hơn biến phí đơn vị (và thuế
+                suất dưới 100%).
+            </p>
+        }
+    </section>
+}

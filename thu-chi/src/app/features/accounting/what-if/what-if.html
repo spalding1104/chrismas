@@ -1,0 +1,95 @@
+<section class="block">
+    <h3 class="block__title field__head">
+        Nếu thay đổi… thì lợi nhuận thế nào?
+        <app-info-tip label="Phân tích nếu thì" [text]="help" />
+    </h3>
+    <div class="changes">
+        @for (f of factors; track f.key) {
+            <label class="change">
+                <span class="change__label">{{ f.label }}</span>
+                <span class="change__input">
+                    <input
+                        class="input"
+                        type="number"
+                        step="1"
+                        inputmode="decimal"
+                        [value]="change()[f.key]"
+                        (input)="setChange(f.key, $any($event.target).value)"
+                    />
+                    <span aria-hidden="true">%</span>
+                </span>
+            </label>
+        }
+    </div>
+    @if (changed()) {
+        <button
+            type="button"
+            class="btn btn--ghost btn--sm reset"
+            (click)="reset()"
+        >
+            Đặt lại
+        </button>
+    }
+
+    <div class="table-scroll">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Chỉ tiêu</th>
+                    <th scope="col">Hiện tại</th>
+                    <th scope="col">Sau thay đổi</th>
+                    <th scope="col">Chênh lệch</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of rows(); track row.label) {
+                    <tr>
+                        <th scope="row">{{ row.label }}</th>
+                        <td>
+                            {{
+                                row.before === null
+                                    ? '—'
+                                    : row.format(row.before)
+                            }}
+                        </td>
+                        <td>
+                            {{
+                                row.after === null ? '—' : row.format(row.after)
+                            }}
+                        </td>
+                        <td [class]="diffClass(row)">{{ diffText(row) }}</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="block">
+    <h3 class="block__title">Độ nhạy của lợi nhuận</h3>
+    <p class="note">
+        Tăng riêng từng yếu tố thêm 10% (giữ nguyên các yếu tố khác), lợi nhuận
+        trước thuế thay đổi:
+    </p>
+    <ol class="sensitivity">
+        @for (s of sensitivity(); track s.factor) {
+            <li>
+                <span class="sensitivity__label">{{ s.label }} +10%</span>
+                <span
+                    class="sensitivity__value"
+                    [class.good]="s.profitChange > 0"
+                    [class.bad]="s.profitChange < 0"
+                >
+                    {{ s.profitChange | vnd: 'always' }}
+                    @if (s.profitChangePct !== null) {
+                        <small>({{ signedPercent(s.profitChangePct) }})</small>
+                    }
+                </span>
+            </li>
+        }
+    </ol>
+    <p class="note">
+        Yếu tố đứng đầu là yếu tố cần kiểm soát kỹ nhất. Với sản lượng, % thay
+        đổi lợi nhuận luôn bằng đòn bẩy hoạt động × 10%.
+    </p>
+</section>

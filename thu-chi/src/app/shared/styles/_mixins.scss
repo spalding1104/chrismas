@@ -1,0 +1,150 @@
+// Mixin SCSS dùng chung giữa các component (shared/ui và features).
+// Token (giá trị) nằm ở src/styles/_tokens.scss; file này ghép token thành
+// các mẫu giao diện lặp lại. Được @use trong style của từng component vì
+// style component Angular được biên dịch riêng, không thấy global styles.
+
+@use 'sass:map';
+
+/// Điểm ngắt màn hình. Media query không đọc được biến CSS nên để ở đây.
+$breakpoints: (
+    sm: 560px,
+    md: 600px,
+    lg: 960px,
+);
+
+/// Áp dụng từ độ rộng màn hình này trở lên.
+@mixin from($name) {
+    @media (min-width: map.get($breakpoints, $name)) {
+        @content;
+    }
+}
+
+/// Áp dụng khi màn hình hẹp hơn hoặc bằng độ rộng này.
+@mixin below($name) {
+    @media (max-width: map.get($breakpoints, $name)) {
+        @content;
+    }
+}
+
+/// Khối "bề mặt" nổi lên trên nền: card, stat-card...
+@mixin surface-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/// Viền focus dùng cho phần tử tương tác (nút, tab, ô chọn...).
+@mixin focus-ring($offset: 1px) {
+    &:focus-visible {
+        outline: var(--focus-width) solid var(--accent);
+        outline-offset: $offset;
+    }
+}
+
+/// Nút viền trên nền surface: nút ‹ ›, "Tháng này", nút giao diện...
+@mixin control {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    cursor: pointer;
+    transition: background var(--duration-fast);
+
+    &:hover {
+        background: var(--surface-muted);
+    }
+
+    @include focus-ring;
+}
+
+/// Rãnh chứa các lựa chọn dạng tab (SegmentedControl, tab Tháng/Năm).
+@mixin segmented-track {
+    display: inline-flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+}
+
+/// Một lựa chọn trong rãnh; dùng kèm segmented-item-active.
+@mixin segmented-item {
+    border-radius: var(--radius-sm);
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background var(--duration-fast),
+        color var(--duration-fast);
+
+    &:hover {
+        color: var(--ink);
+    }
+
+    @include focus-ring;
+}
+
+@mixin segmented-item-active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+}
+
+/// Hộp tooltip của biểu đồ (chỉ để xem, không nhận chuột).
+@mixin tooltip {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    padding: var(--space-1-5) var(--space-2-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: var(--z-tooltip);
+}
+
+/// Hộp thông báo đầu trang (dữ liệu mẫu, lỗi tải...); $tone: accent | expense.
+@mixin notice($tone: accent) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px dashed var(--#{$tone});
+    border-radius: var(--radius-md);
+    background: var(--#{$tone}-soft);
+    font-size: var(--text-sm);
+}
+
+/// Chú thích biểu đồ: ô màu + nhãn, xếp hàng ngang.
+@mixin legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1-5) var(--space-3-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+
+    li {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1-5);
+    }
+
+    i {
+        width: var(--swatch-size);
+        height: var(--swatch-size);
+        border-radius: var(--radius-2xs);
+    }
+}

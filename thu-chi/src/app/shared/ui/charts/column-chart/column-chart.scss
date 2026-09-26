@@ -1,0 +1,140 @@
+@use '../../../styles/mixins' as *;
+
+:host {
+    /* Token riêng của biểu đồ. */
+    --plot-height: 220px;
+    --bar-max-width: 16px;
+    --group-inset: 14%;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.legend {
+    @include legend;
+}
+
+.chart {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: var(--plot-height) auto;
+    column-gap: var(--space-2);
+    row-gap: var(--space-1-5);
+}
+
+.y-axis {
+    position: relative;
+    min-width: 4ch;
+
+    span {
+        position: absolute;
+        right: 0;
+        transform: translateY(50%);
+        color: var(--ink-muted);
+        font-size: var(--text-2xs);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+}
+
+.plot,
+.x-axis {
+    display: grid;
+    grid-template-columns: repeat(var(--groups), minmax(0, 1fr));
+}
+
+.plot {
+    position: relative;
+    border-bottom: 1px solid var(--border);
+}
+
+.grid {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--grid);
+}
+
+.group {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: var(--space-0-5);
+    padding-inline: var(--group-inset);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    outline: none;
+    transition:
+        opacity var(--duration-fast),
+        background var(--duration-fast);
+
+    &:focus-visible {
+        box-shadow: inset 0 0 0 var(--focus-width) var(--accent);
+    }
+}
+
+.group--active {
+    background: var(--hover-wash);
+}
+
+.group--dim {
+    opacity: var(--opacity-dim);
+}
+
+.bar {
+    flex: 1;
+    max-width: var(--bar-max-width);
+    border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+    transition: height var(--duration-slow) var(--ease);
+}
+
+.tip {
+    @include tooltip;
+
+    position: absolute;
+    left: 50%;
+    margin-bottom: var(--space-2);
+    transform: translateX(-50%);
+}
+
+.tip--start {
+    left: 0;
+    transform: none;
+}
+
+.tip--end {
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
+.tip__title {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.tip__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1-5);
+
+    /* Chú thích dạng vạch ngắn thay vì ô vuông trong tooltip. */
+    i {
+        width: var(--swatch-size);
+        height: var(--space-0-5);
+        border-radius: var(--radius-2xs);
+    }
+
+    b {
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.x-axis span {
+    color: var(--ink-muted);
+    font-size: var(--text-2xs);
+    text-align: center;
+}

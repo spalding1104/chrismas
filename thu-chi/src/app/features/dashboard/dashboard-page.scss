@@ -1,42 +1,39 @@
+@use '../../shared/styles/mixins' as *;
+
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
 }
 
 .notice {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border: 1px dashed var(--accent);
-  border-radius: var(--radius-md);
-  background: var(--accent-soft);
-  font-size: var(--text-sm);
+    @include notice;
+}
+
+.notice--error {
+    @include notice(expense);
 }
 
 .layout {
-  display: grid;
-  gap: var(--space-5);
-  align-items: start;
+    display: grid;
+    gap: var(--space-5);
+    align-items: start;
 
-  @media (min-width: 960px) {
-    grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
-  }
+    @include from(lg) {
+        grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+    }
 }
 
 .layout__side,
 .layout__main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
 }
 
-@media (min-width: 960px) {
-  .layout__side {
-    position: sticky;
-    top: 88px;
-  }
+.layout__side {
+    @include from(lg) {
+        position: sticky;
+        top: var(--sticky-offset);
+    }
 }

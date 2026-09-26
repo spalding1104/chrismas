@@ -1,0 +1,161 @@
+<header class="intro">
+    <h2 class="intro__title">Kế toán quản trị · Phân tích CVP</h2>
+    <p class="intro__text">
+        Chi phí – Khối lượng – Lợi nhuận: phân loại chi phí thành biến phí và
+        định phí để tìm điểm hòa vốn, số dư an toàn, đòn bẩy hoạt động và sản
+        lượng cần bán cho lợi nhuận mong muốn.
+    </p>
+</header>
+
+@if (store.error(); as error) {
+    <p class="notice notice--error" role="alert">
+        {{ error }}.
+        <button
+            type="button"
+            class="btn btn--ghost btn--sm"
+            (click)="store.load()"
+        >
+            Thử lại
+        </button>
+    </p>
+}
+
+@if (!store.loaded()) {
+    <p class="loading">Đang tải…</p>
+} @else if (!store.plans().length) {
+    <app-card heading="Chưa có phương án nào">
+        <app-empty-state
+            icon="📊"
+            message="Tạo một phương án (sản phẩm hoặc dự án) để bắt đầu phân tích, hoặc mở ví dụ có sẵn số liệu để xem cách tính."
+        >
+            <div class="empty-actions">
+                @for (example of examples; track example.id) {
+                    <button
+                        type="button"
+                        class="btn btn--primary"
+                        (click)="addExample(example.id)"
+                    >
+                        Ví dụ: {{ example.label }}
+                    </button>
+                }
+                <button type="button" class="btn btn--ghost" (click)="create()">
+                    Phương án trống
+                </button>
+            </div>
+        </app-empty-state>
+    </app-card>
+} @else {
+    <div class="layout">
+        <div class="layout__side">
+            <app-card heading="Số liệu đầu vào">
+                <div class="picker">
+                    <label class="field__label" for="plan-picker"
+                        >Phương án</label
+                    >
+                    <div class="picker__row">
+                        <select
+                            #picker
+                            id="plan-picker"
+                            class="input"
+                            [value]="store.selected()?.id"
+                            (change)="select(picker.value, picker)"
+                        >
+                            @for (plan of store.plans(); track plan.id) {
+                                <option [value]="plan.id">
+                                    {{ plan.name }}
+                                </option>
+                            }
+                        </select>
+                        <button
+                            type="button"
+                            class="btn btn--ghost btn--sm"
+                            (click)="create()"
+                        >
+                            + Mới
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn--ghost btn--sm picker__delete"
+                            (click)="remove()"
+                        >
+                            Xóa
+                        </button>
+                    </div>
+                    <div class="examples">
+                        <span>Thêm ví dụ mẫu:</span>
+                        @for (example of examples; track example.id) {
+                            <button
+                                type="button"
+                                class="chip"
+                                (click)="addExample(example.id)"
+                            >
+                                + {{ example.label }}
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @if (planInput(); as plan) {
+                    <app-plan-form
+                        [plan]="plan"
+                        [unsaved]="unsaved()"
+                        [saving]="saving()"
+                        (draftChange)="draft.set($event)"
+                        (save)="save($event)"
+                    />
+                }
+            </app-card>
+        </div>
+
+        <div class="layout__main">
+            @if (analysis(); as result) {
+                <app-card
+                    heading="Kết quả phân tích"
+                    [subheading]="draft()?.name ?? ''"
+                >
+                    <app-cvp-report
+                        [result]="result"
+                        [unitLabel]="unitLabel()"
+                        [taxRate]="draft()?.taxRate ?? 0"
+                        [targetProfit]="draft()?.targetProfit ?? null"
+                        [targetAfterTax]="draft()?.targetAfterTax ?? true"
+                    />
+                </app-card>
+
+                <app-card
+                    heading="Đồ thị hòa vốn"
+                    subheading="Doanh thu và chi phí theo sản lượng: bên trái điểm hòa vốn là lỗ, bên phải là lãi"
+                >
+                    @if (chart(); as c) {
+                        <app-line-chart
+                            [series]="c.series"
+                            [markers]="c.markers"
+                            [xStep]="c.xStep"
+                            [formatX]="formatUnits"
+                            [formatY]="formatMoney"
+                            [formatXTick]="formatCompact"
+                            [formatYTick]="formatCompact"
+                            [xLabel]="'Sản lượng (' + unitLabel() + ')'"
+                            [detail]="profitAt"
+                            ariaLabel="Đồ thị hòa vốn. Dùng phím mũi tên trái phải để xem số liệu; số liệu đầy đủ ở bảng báo cáo phía trên."
+                        />
+                    } @else {
+                        <app-empty-state
+                            icon="📈"
+                            message="Nhập giá bán, sản lượng và chi phí để vẽ đồ thị."
+                        />
+                    }
+                </app-card>
+
+                @if (base(); as b) {
+                    <app-card
+                        heading="Phân tích nếu… thì…"
+                        subheading="Thử thay đổi giả định mà không sửa số liệu gốc"
+                    >
+                        <app-what-if [base]="b" [unitLabel]="unitLabel()" />
+                    </app-card>
+                }
+            }
+        </div>
+    </div>
+}
