@@ -1,4 +1,7 @@
 export * from './card/card';
+export * from './charts/bar-chart/bar-chart';
+export * from './charts/chart.model';
+export * from './charts/stacked-bar/stacked-bar';
 export * from './empty-state/empty-state';
 export * from './month-picker/month-picker';
 export * from './progress-bar/progress-bar';

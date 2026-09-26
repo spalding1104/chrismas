@@ -7,7 +7,9 @@
   {{ signedAmount() | vnd: 'always' }}
 </span>
 <div class="tools">
-  <button type="button" class="tool" (click)="edit.emit(transaction())" aria-label="Sửa giao dịch">Sửa</button>
+  <button type="button" class="tool" (click)="edit.emit(transaction())" aria-label="Sửa giao dịch">
+    Sửa
+  </button>
   <button
     type="button"
     class="tool tool--danger"

@@ -2,7 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 @Component({
   selector: 'app-progress-bar',
-  template: `<span class="bar__fill" [style.width.%]="clamped()" [style.background]="color()"></span>`,
+  template: `<span
+    class="bar__fill"
+    [style.width.%]="clamped()"
+    [style.background]="color()"
+  ></span>`,
   styles: `
     :host {
       display: block;

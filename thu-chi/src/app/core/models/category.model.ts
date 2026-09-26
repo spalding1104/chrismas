@@ -11,6 +11,8 @@ export interface Category {
 export interface CategoryTotal {
   category: Category;
   total: number;
+  /** Số giao dịch thuộc danh mục. */
+  count: number;
   /** Tỷ lệ trên tổng của cùng loại (0–100). */
   percent: number;
 }

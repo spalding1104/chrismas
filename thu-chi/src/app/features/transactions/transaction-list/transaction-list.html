@@ -2,7 +2,9 @@
   <section class="day">
     <header class="day__header">
       <h3 class="day__title">{{ group.date | dayLabel }}</h3>
-      <span class="day__net" [class.day__net--positive]="group.net > 0">{{ group.net | vnd: 'always' }}</span>
+      <span class="day__net" [class.day__net--positive]="group.net > 0">{{
+        group.net | vnd: 'always'
+      }}</span>
     </header>
     <ul class="day__items">
       @for (tx of group.items; track tx.id) {

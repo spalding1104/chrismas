@@ -1,7 +1,9 @@
 @if (store.isSample()) {
   <div class="notice" role="status">
     <span>Đây là dữ liệu mẫu để bạn xem thử. Xóa đi để bắt đầu ghi chép của riêng bạn.</span>
-    <button type="button" class="btn btn--ghost btn--sm" (click)="store.clearSample()">Xóa dữ liệu mẫu</button>
+    <button type="button" class="btn btn--ghost btn--sm" (click)="store.clearSample()">
+      Xóa dữ liệu mẫu
+    </button>
   </div>
 }
 
@@ -22,34 +24,35 @@
         (cancelled)="editing.set(null)"
       />
     </app-card>
+  </div>
 
-    <app-card heading="Theo danh mục">
+  <div class="layout__main">
+    <app-card heading="Biểu đồ danh mục" [subheading]="breakdownSubheading()">
       <app-segmented-control
         cardActions
         ariaLabel="Xem theo"
         [options]="breakdownOptions"
         [(value)]="breakdownType"
       />
-      <app-category-breakdown [items]="breakdownItems()" />
+      <app-category-chart [items]="breakdownItems()" />
+    </app-card>
+
+    <app-card
+      heading="Giao dịch trong tháng"
+      [subheading]="store.monthTransactions().length + ' giao dịch'"
+    >
+      <app-segmented-control
+        cardActions
+        ariaLabel="Lọc giao dịch"
+        [options]="listFilterOptions"
+        [(value)]="listFilter"
+      />
+      <app-transaction-list
+        [transactions]="visibleTransactions()"
+        [activeId]="editing()?.id ?? null"
+        (edit)="editing.set($event)"
+        (remove)="onRemove($event)"
+      />
     </app-card>
   </div>
-
-  <app-card
-    class="layout__main"
-    heading="Giao dịch trong tháng"
-    [subheading]="store.monthTransactions().length + ' giao dịch'"
-  >
-    <app-segmented-control
-      cardActions
-      ariaLabel="Lọc giao dịch"
-      [options]="listFilterOptions"
-      [(value)]="listFilter"
-    />
-    <app-transaction-list
-      [transactions]="visibleTransactions()"
-      [activeId]="editing()?.id ?? null"
-      (edit)="editing.set($event)"
-      (remove)="onRemove($event)"
-    />
-  </app-card>
 </div>

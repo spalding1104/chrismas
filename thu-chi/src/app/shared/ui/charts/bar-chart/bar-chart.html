@@ -1,0 +1,54 @@
+<div class="chart" role="table" [attr.aria-label]="ariaLabel()">
+  <div class="axis" role="presentation" aria-hidden="true">
+    <span></span>
+    <div class="axis__plot">
+      @for (t of ticks(); track t) {
+        <span class="axis__tick" [style.left.%]="width(t)" [class.axis__tick--end]="$last">{{
+          formatTick()(t)
+        }}</span>
+      }
+    </div>
+    <span></span>
+  </div>
+
+  @for (d of data(); track d.id) {
+    <div
+      class="row"
+      role="row"
+      tabindex="0"
+      [class.row--dim]="activeId() && activeId() !== d.id"
+      [class.row--active]="activeId() === d.id"
+      (pointerenter)="activeId.set(d.id)"
+      (pointerleave)="activeId.set(null)"
+      (focus)="activeId.set(d.id)"
+      (blur)="activeId.set(null)"
+    >
+      <span class="label" role="rowheader">
+        @if (d.icon) {
+          <span aria-hidden="true">{{ d.icon }}</span>
+        }
+        <span class="label__text">{{ d.label }}</span>
+      </span>
+
+      <div class="plot" role="cell">
+        @for (t of ticks(); track t) {
+          <i class="grid" [style.left.%]="width(t)"></i>
+        }
+        <span class="bar" [style.width.%]="width(d.value)" [style.background]="d.color"></span>
+        @if (activeId() === d.id) {
+          <span class="tip" [style.left.%]="width(d.value)" aria-hidden="true">
+            <b>{{ formatValue()(d.value) }}</b>
+            @if (d.detail) {
+              <span>{{ d.detail }}</span>
+            }
+          </span>
+        }
+      </div>
+
+      <span class="value" role="cell">
+        {{ formatValue()(d.value) }}
+        <small>{{ share(d.value) }}</small>
+      </span>
+    </div>
+  }
+</div>

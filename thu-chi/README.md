@@ -16,7 +16,7 @@ npm run build      # build production vào dist/
 - Chọn tháng, xem **Tổng thu / Tổng chi / Còn lại** và tỷ lệ tiết kiệm
 - Thêm, sửa, xóa khoản thu/chi (có nút cộng nhanh +50k, +100k…)
 - Danh sách giao dịch nhóm theo ngày, lọc Thu / Chi
-- Thống kê theo danh mục kèm thanh tỷ lệ
+- **Biểu đồ danh mục** (chi hoặc thu): thanh cơ cấu 100% và biểu đồ cột ngang so sánh số tiền, có tooltip khi rê chuột
 - Lưu tự động vào `localStorage`; có dữ liệu mẫu ở lần mở đầu
 - Hỗ trợ giao diện sáng/tối theo hệ thống, dùng tốt trên điện thoại
 
@@ -33,10 +33,11 @@ src/app/
 ├── shared/                    # Tái sử dụng được ở bất kỳ feature nào
 │   ├── pipes/                 # vnd (định dạng tiền), dayLabel
 │   └── ui/                    # Card, StatCard, ProgressBar, EmptyState,
-│                              # MonthPicker, SegmentedControl
+│                              # MonthPicker, SegmentedControl,
+│                              # charts/ (BarChart, StackedBar – nhận ChartDatum chung)
 ├── features/                  # Mỗi tính năng một thư mục
 │   ├── dashboard/             # Trang chính (container) – nối store với UI
-│   ├── summary/               # SummaryOverview, CategoryBreakdown
+│   ├── summary/               # SummaryOverview, CategoryChart
 │   └── transactions/          # TransactionForm, TransactionList, TransactionItem
 ├── app.ts                     # Khung trang: header + chọn tháng
 └── app.config.ts
@@ -58,6 +59,7 @@ Quy tắc phụ thuộc: `features → shared → core`. `shared` và `core` kh�
 
 ## Mở rộng
 
-- **Thêm danh mục**: sửa `core/constants/categories.ts`.
+- **Thêm danh mục**: sửa `core/constants/categories.ts`. Màu biểu đồ dùng token `--series-1…7` và `--series-other` trong `styles.scss`; thứ tự đã kiểm tra phân biệt được với người mù màu, nên danh mục thứ 8 trở đi hãy dùng `--series-other` thay vì thêm màu mới.
+- **Biểu đồ ở trang khác**: `BarChart` / `StackedBar` chỉ nhận `ChartDatum` (`id, label, value, color`), không phụ thuộc nghiệp vụ thu chi.
 - **Đổi nơi lưu dữ liệu** (API, IndexedDB…): chỉ cần thay `LocalStorageService` / phần `hydrate` trong `TransactionStore`, UI giữ nguyên.
 - **Thêm trang mới** (ví dụ báo cáo năm): tạo `features/<ten-trang>/` và dùng lại các component trong `shared/ui`.

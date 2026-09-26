@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Transaction, TransactionDraft, TransactionType } from '../../core/models';
 import { TransactionStore } from '../../core/state/transaction.store';
 import { defaultDateFor } from '../../core/utils/date.util';
+import { formatVnd } from '../../shared/pipes';
 import { Card, SegmentOption, SegmentedControl } from '../../shared/ui';
-import { CategoryBreakdown, SummaryOverview } from '../summary';
+import { CategoryChart, SummaryOverview } from '../summary';
 import { TransactionForm, TransactionList } from '../transactions';
 
 type ListFilter = 'all' | TransactionType;
@@ -15,7 +16,14 @@ type ListFilter = 'all' | TransactionType;
  */
 @Component({
   selector: 'app-dashboard-page',
-  imports: [Card, SegmentedControl, SummaryOverview, CategoryBreakdown, TransactionForm, TransactionList],
+  imports: [
+    Card,
+    SegmentedControl,
+    SummaryOverview,
+    CategoryChart,
+    TransactionForm,
+    TransactionList,
+  ],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,7 +57,14 @@ export class DashboardPage {
   });
 
   protected readonly breakdownItems = computed(() =>
-    this.breakdownType() === 'expense' ? this.store.expenseByCategory() : this.store.incomeByCategory(),
+    this.breakdownType() === 'expense'
+      ? this.store.expenseByCategory()
+      : this.store.incomeByCategory(),
+  );
+  protected readonly breakdownSubheading = computed(() =>
+    this.breakdownType() === 'expense'
+      ? `Tổng chi ${formatVnd(this.store.totalExpense())}`
+      : `Tổng thu ${formatVnd(this.store.totalIncome())}`,
   );
 
   protected onSave(draft: TransactionDraft): void {

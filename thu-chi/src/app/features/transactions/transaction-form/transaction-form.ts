@@ -54,7 +54,9 @@ export class TransactionForm {
   private readonly type = toSignal(this.form.controls.type.valueChanges, {
     initialValue: this.form.controls.type.value,
   });
-  protected readonly amount = toSignal(this.form.controls.amount.valueChanges, { initialValue: null });
+  protected readonly amount = toSignal(this.form.controls.amount.valueChanges, {
+    initialValue: null,
+  });
   protected readonly selectedCategory = toSignal(this.form.controls.categoryId.valueChanges, {
     initialValue: this.form.controls.categoryId.value,
   });

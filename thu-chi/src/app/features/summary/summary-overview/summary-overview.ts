@@ -6,9 +6,27 @@ import { StatCard } from '../../../shared/ui';
   selector: 'app-summary-overview',
   imports: [StatCard],
   template: `
-    <app-stat-card label="Tổng thu" icon="↓" tone="income" [amount]="income()" [hint]="incomeHint()" />
-    <app-stat-card label="Tổng chi" icon="↑" tone="expense" [amount]="expense()" [hint]="expenseHint()" />
-    <app-stat-card label="Còn lại" icon="＝" [tone]="balanceTone()" [amount]="balance()" [hint]="savingHint()" />
+    <app-stat-card
+      label="Tổng thu"
+      icon="↓"
+      tone="income"
+      [amount]="income()"
+      [hint]="incomeHint()"
+    />
+    <app-stat-card
+      label="Tổng chi"
+      icon="↑"
+      tone="expense"
+      [amount]="expense()"
+      [hint]="expenseHint()"
+    />
+    <app-stat-card
+      label="Còn lại"
+      icon="＝"
+      [tone]="balanceTone()"
+      [amount]="balance()"
+      [hint]="savingHint()"
+    />
   `,
   styles: `
     :host {

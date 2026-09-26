@@ -84,10 +84,9 @@ export class TransactionStore {
     const grand = this.sumBy(type);
     return categoriesOf(type)
       .map((category) => {
-        const total = this.monthTransactions()
-          .filter((t) => t.categoryId === category.id)
-          .reduce((sum, t) => sum + t.amount, 0);
-        return { category, total, percent: grand ? (total / grand) * 100 : 0 };
+        const items = this.monthTransactions().filter((t) => t.categoryId === category.id);
+        const total = items.reduce((sum, t) => sum + t.amount, 0);
+        return { category, total, count: items.length, percent: grand ? (total / grand) * 100 : 0 };
       })
       .filter((c) => c.total > 0)
       .sort((a, b) => b.total - a.total);

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, model, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface SegmentOption<T extends string> {

@@ -1,0 +1,27 @@
+@if (ranked().length) {
+  <section class="block">
+    <h3 class="block__title">Cơ cấu</h3>
+    <app-stacked-bar
+      [data]="composition()"
+      [formatValue]="formatValue"
+      ariaLabel="Cơ cấu theo danh mục"
+    />
+    <ul class="legend">
+      @for (d of composition(); track d.id) {
+        <li><i [style.background]="d.color"></i>{{ d.label }}</li>
+      }
+    </ul>
+  </section>
+
+  <section class="block">
+    <h3 class="block__title">So sánh theo số tiền</h3>
+    <app-bar-chart
+      [data]="ranked()"
+      [formatValue]="formatValue"
+      [formatTick]="formatTick"
+      ariaLabel="Số tiền theo danh mục"
+    />
+  </section>
+} @else {
+  <app-empty-state icon="📊" [message]="emptyMessage()" />
+}

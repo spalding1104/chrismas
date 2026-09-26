@@ -17,8 +17,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       text-align: center;
       color: var(--ink-muted);
     }
-    .empty__icon { font-size: 32px; }
-    .empty__text { margin: 0; font-size: var(--text-sm); max-width: 32ch; }
+    .empty__icon {
+      font-size: 32px;
+    }
+    .empty__text {
+      margin: 0;
+      font-size: var(--text-sm);
+      max-width: 32ch;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
