@@ -285,7 +285,7 @@
 
   $("previewBtn").addEventListener("click", () => {
     card = formCard();
-    history.replaceState(null, "", buildLink(card));
+    try { history.replaceState(null, "", buildLink(card)); } catch {}
     editor.close();
     reset();
   });
