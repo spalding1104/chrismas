@@ -7,6 +7,8 @@ services:
     runtime: node
     rootDir: thu-chi
     plan: free
+    # Cùng vùng với database Neon (us-east-2 = Ohio) để truy vấn nhanh.
+    region: ohio
     # --include=dev: Angular CLI nằm trong devDependencies, mà NODE_ENV=production
     # khiến npm ci bỏ qua devDependencies.
     buildCommand: npm ci --include=dev && npm run build && npm ci --prefix server --omit=dev
