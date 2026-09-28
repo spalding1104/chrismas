@@ -51,6 +51,26 @@ Mọi API `/api/transactions` cần đăng nhập (không thì trả 401) và ch
 | POST   | `/api/cvp-plans`               | Thêm phương án                           |
 | PUT    | `/api/cvp-plans/:id`           | Sửa phương án                            |
 | DELETE | `/api/cvp-plans/:id`           | Xóa phương án                            |
+| GET    | `/api/health`                  | Kiểm tra server còn sống (không cần đăng nhập) |
+
+## Đưa lên mạng (Neon + Render)
+
+Một web service duy nhất: Express vừa chạy API vừa phục vụ bản build Angular
+(`dist/thu-chi/browser`, nếu thư mục này tồn tại), nên frontend và API chung
+domain và cookie đăng nhập hoạt động không cần CORS.
+
+1. **Database**: tạo project trên [neon.tech](https://neon.tech), rồi sao chép
+   connection string (dạng `postgres://…?sslmode=require`).
+2. **Server**: trên [render.com](https://render.com), chọn **New → Blueprint**
+   và chọn repo này. Render đọc `render.yaml` ở gốc repo, với cấu hình
+   `rootDir: thu-chi`, build = `npm run build` + cài `server/`, start =
+   `npm start --prefix server`.
+3. Khi Render hỏi `DATABASE_URL`, dán connection string của Neon vào. Bảng
+   được tạo tự động lúc server khởi động.
+4. Mở link `https://thu-chi-….onrender.com` và đăng ký tài khoản.
+
+Gói free của Render sẽ tạm ngủ server sau khoảng 15 phút không có truy cập,
+nên lần mở đầu tiên sau đó mất chừng 30–60 giây.
 
 ## Tính năng
 

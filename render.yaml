@@ -1,0 +1,21 @@
+# Render Blueprint: một web service chạy backend Express, phục vụ luôn bản
+# build Angular. Database dùng Postgres bên ngoài (vd. Neon) — dán connection
+# string vào DATABASE_URL khi Render hỏi.
+services:
+  - type: web
+    name: thu-chi
+    runtime: node
+    rootDir: thu-chi
+    plan: free
+    # --include=dev: Angular CLI nằm trong devDependencies, mà NODE_ENV=production
+    # khiến npm ci bỏ qua devDependencies.
+    buildCommand: npm ci --include=dev && npm run build && npm ci --prefix server --omit=dev
+    startCommand: npm start --prefix server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "24"
+      - key: DATABASE_URL
+        sync: false

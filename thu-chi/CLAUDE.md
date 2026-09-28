@@ -65,6 +65,7 @@ Dependency rule: `features → shared → core`. `shared` and `core` never impor
 - Every query in `src/transactions.ts` must filter by `user_id = currentUser(res).id` — including UPDATE/DELETE, so another user's id just 404s. `user_id` is nullable only because of pre-auth rows; always set it on insert.
 - `src/transactions.ts` holds the router and the zod `draftSchema`; the frontend `Transaction` model, `draftSchema`, and the SQL `COLUMNS` list must be kept in sync by hand. `COLUMNS` returns `date` via `to_char` (a pg `Date` would shift by timezone) and `bigint` is parsed to `Number` globally in `db.ts`.
 - `DELETE /sample` must stay registered before `/:id`.
+- Deploy: `src/server.ts` also serves `../dist/thu-chi/browser` (static + SPA fallback to `index.html`) when it exists, behind a JSON 404 for unknown `/api/*`; `GET /api/health` is the unauthenticated health check. `render.yaml` at the git repo root (one level above this folder) is the Render blueprint; `DATABASE_URL` comes from an external Postgres (Neon). If you change the Angular `outputPath`, update `webRoot`.
 - Imports use explicit `.ts` extensions and only erasable TS syntax (no enums/parameter properties) — required by Node type stripping.
 - Store tests mock the API with `HttpTestingController`; the backend has no automated tests. When testing auth manually, use a separate database (e.g. run a second server with `DATABASE_URL=…/thu_chi_test PORT=3100`) — registering the first account on the real DB claims the user's existing data.
 
