@@ -19,6 +19,8 @@ import {
     TransactionType,
 } from '../models';
 import { monthOf, toMonthKey } from '../utils/date.util';
+import { expandRecurring, monthsOfYear } from '../utils/recurring.util';
+import { RecurringStore } from './recurring.store';
 
 export const TRANSACTIONS_API = '/api/transactions';
 
@@ -31,6 +33,7 @@ export const TRANSACTIONS_API = '/api/transactions';
 export class TransactionStore {
     private readonly http = inject(HttpClient);
     private readonly auth = inject(AuthStore);
+    private readonly recurring = inject(RecurringStore);
 
     private readonly _transactions = signal<Transaction[]>([]);
     private readonly _error = signal<string | null>(null);
@@ -42,8 +45,27 @@ export class TransactionStore {
     );
     readonly selectedMonth = signal(toMonthKey(new Date()));
 
+    /** Năm của tháng đang chọn; đổi năm sẽ giữ nguyên tháng trong năm. */
+    readonly selectedYear = computed(() =>
+        Number(this.selectedMonth().slice(0, 4)),
+    );
+
+    /**
+     * Giao dịch thật + khoản cố định hằng tháng tính ra cho cả năm đang
+     * chọn (đủ cho cả xem tháng lẫn xem năm, vì tháng luôn thuộc năm đó).
+     * Mọi số liệu bên dưới đọc từ đây; `transactions`/`isSample` vẫn chỉ là
+     * dòng thật trong DB.
+     */
+    private readonly withRecurring = computed(() => [
+        ...this._transactions(),
+        ...expandRecurring(
+            this.recurring.items(),
+            monthsOfYear(this.selectedYear()),
+        ),
+    ]);
+
     readonly monthTransactions = computed(() =>
-        this._transactions()
+        this.withRecurring()
             .filter((t) => monthOf(t.date) === this.selectedMonth())
             .sort((a, b) => b.date.localeCompare(a.date)),
     );
@@ -63,14 +85,9 @@ export class TransactionStore {
         groupBy(this.monthTransactions(), 'expense'),
     );
 
-    /** Năm của tháng đang chọn; đổi năm sẽ giữ nguyên tháng trong năm. */
-    readonly selectedYear = computed(() =>
-        Number(this.selectedMonth().slice(0, 4)),
-    );
-
     readonly yearTransactions = computed(() => {
         const prefix = `${this.selectedYear()}-`;
-        return this._transactions().filter((t) => t.date.startsWith(prefix));
+        return this.withRecurring().filter((t) => t.date.startsWith(prefix));
     });
 
     readonly yearIncome = computed(() =>

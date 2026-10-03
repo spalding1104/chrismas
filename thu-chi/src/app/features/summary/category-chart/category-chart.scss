@@ -24,3 +24,105 @@
 .legend {
     @include legend;
 }
+
+.block__hint {
+    margin: calc(var(--space-2) * -1) 0 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+.detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-left: 3px solid var(--cat);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--surface-muted);
+    animation: detail-in var(--duration-fast) var(--ease);
+}
+
+@keyframes detail-in {
+    from {
+        opacity: 0;
+        transform: translateY(calc(var(--space-1) * -1));
+    }
+}
+
+/* Một lưới chung cho cả danh sách (subgrid ở từng dòng), để cột ngày rộng
+   vừa đúng chữ dài nhất ("Thứ Năm, 12/10") và mọi dòng thẳng cột với nhau. */
+.detail__list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    column-gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.detail__item {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+    padding-block: var(--space-2);
+    font-size: var(--text-sm);
+
+    & + & {
+        border-top: 1px solid var(--border);
+    }
+}
+
+.detail__date {
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+}
+
+.detail__note {
+    overflow: hidden;
+    color: var(--ink-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.detail__amount {
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Hẹp (container là host của app-bar-chart, nơi card này được đổ vào):
+   ngày lên một dòng riêng phía trên, để ghi chú còn đủ chỗ đọc. */
+@container (max-width: 480px) {
+    .detail__list {
+        grid-template-columns: minmax(0, 1fr) max-content;
+    }
+
+    .detail__item {
+        grid-template-areas:
+            'date date'
+            'note amount';
+        row-gap: var(--space-0-5);
+    }
+
+    .detail__date {
+        grid-area: date;
+    }
+
+    .detail__note {
+        grid-area: note;
+    }
+
+    .detail__amount {
+        grid-area: amount;
+    }
+}
+
+.detail__empty {
+    margin: 0;
+    padding-block: var(--space-1);
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}

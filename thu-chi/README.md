@@ -51,6 +51,10 @@ Mọi API `/api/transactions` cần đăng nhập (không thì trả 401) và ch
 | POST   | `/api/cvp-plans`               | Thêm phương án                           |
 | PUT    | `/api/cvp-plans/:id`           | Sửa phương án                            |
 | DELETE | `/api/cvp-plans/:id`           | Xóa phương án                            |
+| GET    | `/api/recurring`               | Các khoản thu/chi cố định hằng tháng     |
+| POST   | `/api/recurring`               | Thêm khoản (kèm `startMonth`)            |
+| PUT    | `/api/recurring/:id`           | Sửa từ `fromMonth` trở đi                |
+| DELETE | `/api/recurring/:id?from=YYYY-MM` | Ngừng từ tháng đó                     |
 | GET    | `/api/health`                  | Kiểm tra server còn sống (không cần đăng nhập) |
 
 ## Đưa lên mạng (Neon + Render)
@@ -77,6 +81,7 @@ nên lần mở đầu tiên sau đó mất chừng 30–60 giây.
 - Chọn tháng, xem **Tổng thu / Tổng chi / Còn lại** và tỷ lệ tiết kiệm
 - Thêm, sửa, xóa khoản thu/chi (có nút cộng nhanh +50k, +100k…)
 - Danh sách giao dịch nhóm theo ngày, lọc Thu / Chi
+- **Khoản cố định hằng tháng** (card dưới form Thêm giao dịch): nhập sẵn các khoản thu/chi tháng nào cũng có (Spotify, cước điện thoại, tiền nhà, lương…), tự tính vào mọi tháng kể từ tháng thêm; sửa/xóa áp dụng từ tháng đang xem trở đi, các tháng trước giữ nguyên
 - **Biểu đồ danh mục** (chi hoặc thu): thanh cơ cấu 100% và biểu đồ cột ngang so sánh số tiền, có tooltip khi rê chuột
 - **Thống kê năm** (tab "Năm", đường dẫn `/nam`): tổng thu/chi cả năm, biểu đồ cột thu – chi 12 tháng, bảng chi tiết từng tháng (bấm để mở tháng đó) và biểu đồ danh mục cả năm
 - **Đăng nhập / đăng ký**, mỗi tài khoản có dữ liệu riêng

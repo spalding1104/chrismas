@@ -1,10 +1,10 @@
 import { Category, TransactionType } from '../models';
 
 /**
- * Màu dùng token `--series-*` (định nghĩa trong styles.scss, có bản
- * sáng/tối riêng). Thứ tự slot đã được kiểm tra phân biệt được với người
- * mù màu — giữ nguyên thứ tự, danh mục mới nên gom vào "khác" thay vì
- * sinh thêm màu.
+ * Màu dùng token `--series-1` … `--series-10` (định nghĩa trong
+ * styles/_tokens.scss, có bản sáng/tối riêng). Thứ tự slot đã được kiểm tra
+ * để các màu kề nhau phân biệt được với người mù màu — giữ nguyên thứ tự;
+ * danh mục thứ 11 trở đi dùng --series-other thay vì sinh thêm màu.
  */
 export const CATEGORIES: readonly Category[] = [
     {
@@ -13,6 +13,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '💼',
         color: 'var(--series-1)',
         type: 'income',
+        noteHint: 'VD: Lương tháng 10',
     },
     {
         id: 'bonus',
@@ -20,6 +21,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🎁',
         color: 'var(--series-2)',
         type: 'income',
+        noteHint: 'VD: Thưởng Tết, thưởng dự án',
     },
     {
         id: 'side-job',
@@ -27,6 +29,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '💡',
         color: 'var(--series-3)',
         type: 'income',
+        noteHint: 'VD: Dạy kèm, freelance',
     },
     {
         id: 'other-income',
@@ -34,6 +37,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '💰',
         color: 'var(--series-other)',
         type: 'income',
+        noteHint: 'VD: Bán đồ cũ, được tặng',
     },
 
     {
@@ -42,6 +46,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🍜',
         color: 'var(--series-1)',
         type: 'expense',
+        noteHint: 'VD: Ăn trưa, cà phê, đi chợ',
     },
     {
         id: 'transport',
@@ -49,6 +54,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🛵',
         color: 'var(--series-2)',
         type: 'expense',
+        noteHint: 'VD: Đổ xăng, Grab, gửi xe',
     },
     {
         id: 'housing',
@@ -56,6 +62,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🏠',
         color: 'var(--series-3)',
         type: 'expense',
+        noteHint: 'VD: Tiền nhà, điện, nước, internet',
     },
     {
         id: 'shopping',
@@ -63,13 +70,15 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🛍️',
         color: 'var(--series-4)',
         type: 'expense',
+        noteHint: 'VD: Quần áo, đồ gia dụng',
     },
     {
         id: 'health',
         name: 'Sức khỏe',
-        icon: '💊',
+        icon: '❤️',
         color: 'var(--series-5)',
         type: 'expense',
+        noteHint: 'VD: Khám bệnh, thuốc, bảo hiểm',
     },
     {
         id: 'education',
@@ -77,6 +86,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '📚',
         color: 'var(--series-6)',
         type: 'expense',
+        noteHint: 'VD: Học phí, sách, khóa học online',
     },
     {
         id: 'entertainment',
@@ -84,6 +94,31 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🎬',
         color: 'var(--series-7)',
         type: 'expense',
+        noteHint: 'VD: Xem phim, du lịch, game',
+    },
+    {
+        id: 'sports',
+        name: 'Thể thao',
+        icon: '🏸',
+        color: 'var(--series-8)',
+        type: 'expense',
+        noteHint: 'VD: Sân cầu lông, phí gym',
+    },
+    {
+        id: 'charity',
+        name: 'Từ thiện',
+        icon: '🤝',
+        color: 'var(--series-9)',
+        type: 'expense',
+        noteHint: 'VD: Ủng hộ bão lũ',
+    },
+    {
+        id: 'subscriptions',
+        name: 'Dịch vụ & thuê bao',
+        icon: '📱',
+        color: 'var(--series-10)',
+        type: 'expense',
+        noteHint: 'VD: Claude, Spotify, iCloud, thẻ điện thoại',
     },
     {
         id: 'other-expense',
@@ -91,6 +126,7 @@ export const CATEGORIES: readonly Category[] = [
         icon: '📦',
         color: 'var(--series-other)',
         type: 'expense',
+        noteHint: 'VD: Quà cưới, sửa đồ',
     },
 ];
 
@@ -100,6 +136,7 @@ const FALLBACK: Category = {
     icon: '❔',
     color: 'var(--series-other)',
     type: 'expense',
+    noteHint: 'Ghi chú thêm (không bắt buộc)',
 };
 
 export function findCategory(id: string): Category {

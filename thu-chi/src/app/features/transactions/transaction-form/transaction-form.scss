@@ -10,16 +10,121 @@
     display: flex;
 }
 
+.amount-head {
+    justify-content: space-between;
+}
+
+/* Nút chữ màu nhấn ở góc phải hàng nhãn — đủ nổi để thấy ngay khi có số. */
+.amount-reset {
+    padding: var(--space-0-5) var(--space-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color var(--duration-fast);
+
+    &:hover {
+        border-color: var(--accent);
+    }
+
+    @include focus-ring;
+}
+
+.amount-reset--hidden {
+    visibility: hidden;
+}
+
+/* Ô số tiền + nút ⌫ nằm bên phải, bên trong ô. */
+.amount {
+    position: relative;
+}
+
 .input--amount {
+    /* Chừa chỗ cho nút ⌫ để số dài không chạy xuống dưới nút. */
+    padding-right: calc(var(--control-height-sm) + var(--space-2-5));
     font-size: var(--text-xl);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
+}
+
+.amount__backspace {
+    position: absolute;
+    top: 50%;
+    right: var(--space-2);
+    width: var(--control-height-sm);
+    height: var(--control-height-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface-muted);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--icon-size-sm);
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+
+    &:hover {
+        border-color: var(--accent);
+    }
+
+    &:active {
+        background: var(--accent-soft);
+    }
+
+    @include focus-ring;
 }
 
 .quick {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
+}
+
+/* Chip "000"/"0000": chữ số đậm, đều nhau như phím số. */
+.chip--zeros {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+/* Hàng phím số 1–0: 10 ô chia đều hết chiều ngang, như một hàng bàn phím. */
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: var(--space-1);
+}
+
+.keypad__key {
+    height: var(--control-height);
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--text-md);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background var(--duration-fast),
+        border-color var(--duration-fast);
+
+    &:hover {
+        border-color: var(--accent);
+        background: var(--surface-muted);
+    }
+
+    &:active {
+        background: var(--accent-soft);
+    }
+
+    @include focus-ring;
 }
 
 .categories {
@@ -52,16 +157,18 @@
     @include focus-ring;
 }
 
+.category__icon {
+    /* Chiều rộng cố định: icon emoji rộng hẹp khác nhau, không có ô này thì
+       chữ bên cạnh mỗi dòng lệch một kiểu, nhìn không thẳng cột. */
+    flex: none;
+    width: var(--icon-size-md);
+    text-align: center;
+}
+
 .category--active {
     border-color: var(--cat);
     background: color-mix(in srgb, var(--cat) 14%, var(--surface));
     font-weight: 600;
-}
-
-.row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: var(--space-3);
 }
 
 .actions {

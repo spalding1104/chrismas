@@ -53,3 +53,25 @@ CREATE TABLE IF NOT EXISTS cvp_plans (
 
 CREATE INDEX IF NOT EXISTS cvp_plans_user_idx
   ON cvp_plans (user_id, created_at);
+
+-- Khoản thu/chi cố định hằng tháng (Spotify, cước điện thoại, lương…).
+-- Không sinh dòng trong `transactions`: frontend tự tính ra một khoản cho
+-- mỗi tháng trong [start_month, end_month] (end_month NULL = vẫn còn).
+-- Sửa/ngừng "từ tháng X" đóng dòng cũ ở tháng trước X (và tạo dòng mới khi
+-- sửa) để các tháng đã qua giữ nguyên số liệu — xem src/recurring.ts.
+CREATE TABLE IF NOT EXISTS recurring_items (
+  id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     uuid        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  type        text        NOT NULL CHECK (type IN ('income', 'expense')),
+  amount      bigint      NOT NULL CHECK (amount > 0),
+  category_id text        NOT NULL,
+  note        text        NOT NULL DEFAULT '',
+  -- Ngày trong tháng; tháng ngắn hơn thì frontend dồn về ngày cuối tháng.
+  day         smallint    NOT NULL CHECK (day BETWEEN 1 AND 31),
+  start_month char(7)     NOT NULL,
+  end_month   char(7),
+  created_at  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS recurring_items_user_idx
+  ON recurring_items (user_id, created_at);

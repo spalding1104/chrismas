@@ -24,16 +24,11 @@
     }
 }
 
+/* Cột trái không còn sticky: có thêm card Khoản cố định nên cột thường cao
+   hơn màn hình, sticky sẽ khiến phần dưới khó cuộn tới. */
 .layout__side,
 .layout__main {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
-}
-
-.layout__side {
-    @include from(lg) {
-        position: sticky;
-        top: var(--sticky-offset);
-    }
 }

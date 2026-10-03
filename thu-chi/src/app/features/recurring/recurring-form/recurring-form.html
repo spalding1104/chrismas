@@ -1,0 +1,67 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="form" novalidate>
+    <app-segmented-control
+        class="form__type"
+        formControlName="type"
+        [options]="typeOptions"
+        ariaLabel="Loại khoản cố định"
+    />
+
+    <div class="field">
+        <label class="field__label" for="rec-note">Tên khoản</label>
+        <input
+            id="rec-note"
+            class="input"
+            maxlength="80"
+            formControlName="note"
+            [placeholder]="notePlaceholder()"
+        />
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label class="field__label" for="rec-amount"
+                >Số tiền mỗi tháng</label
+            >
+            <input
+                id="rec-amount"
+                class="input"
+                appAmountInput
+                [maxIntegerDigits]="maxDigits"
+                placeholder="0"
+                formControlName="amount"
+                [attr.aria-invalid]="showError('amount')"
+            />
+        </div>
+        <div class="field">
+            <label class="field__label" for="rec-day">Ngày đóng</label>
+            <select id="rec-day" class="input" formControlName="day">
+                @for (d of days; track d) {
+                    <option [ngValue]="d">{{ d }}</option>
+                }
+            </select>
+        </div>
+    </div>
+    @if (showError('amount')) {
+        <p class="field__error">
+            Nhập số tiền từ {{ minAmount | vnd }} đến {{ maxAmount | vnd }}.
+        </p>
+    }
+
+    <div class="field">
+        <label class="field__label" for="rec-category">Danh mục</label>
+        <select id="rec-category" class="input" formControlName="categoryId">
+            @for (c of categories(); track c.id) {
+                <option [value]="c.id">{{ c.icon }} {{ c.name }}</option>
+            }
+        </select>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn btn--ghost" (click)="cancelled.emit()">
+            Hủy
+        </button>
+        <button type="submit" class="btn btn--primary">
+            {{ item() ? 'Lưu thay đổi' : 'Thêm khoản' }}
+        </button>
+    </div>
+</form>

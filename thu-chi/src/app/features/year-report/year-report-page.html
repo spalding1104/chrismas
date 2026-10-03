@@ -59,7 +59,10 @@
                             } @else {
                                 <td>{{ m.income | vnd }}</td>
                                 <td>{{ m.expense | vnd }}</td>
-                                <td [class.negative]="m.balance < 0">
+                                <td
+                                    [class.positive]="m.balance > 0"
+                                    [class.negative]="m.balance < 0"
+                                >
                                     {{ m.balance | vnd }}
                                 </td>
                             }
@@ -72,6 +75,9 @@
                         <td>{{ store.yearIncome() | vnd }}</td>
                         <td>{{ store.yearExpense() | vnd }}</td>
                         <td
+                            [class.positive]="
+                                store.yearIncome() > store.yearExpense()
+                            "
                             [class.negative]="
                                 store.yearIncome() < store.yearExpense()
                             "
@@ -93,6 +99,7 @@
         />
         <app-category-chart
             [items]="breakdownItems()"
+            [transactions]="store.yearTransactions()"
             emptyMessage="Chưa có dữ liệu cho năm này."
         />
     </app-card>

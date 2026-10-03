@@ -7,31 +7,95 @@
     />
 
     <div class="field">
-        <label class="field__label" for="tx-amount">Số tiền (VND)</label>
-        <input
-            id="tx-amount"
-            class="input input--amount"
-            type="number"
-            inputmode="numeric"
-            min="0"
-            step="1000"
-            placeholder="0"
-            formControlName="amount"
-            [attr.aria-invalid]="showError('amount')"
-        />
-        <div class="quick">
+        <div class="field__head amount-head">
+            <label class="field__label" for="tx-amount">Số tiền (VND)</label>
+            <!--
+                Chỉ hiện khi ô có số, nhưng ẩn bằng visibility (vẫn giữ chỗ)
+                chứ không gỡ khỏi DOM: nút cao hơn chữ nhãn, gỡ/thêm sẽ đẩy
+                hàng phím số bên dưới lên xuống đúng lúc đang bấm.
+            -->
+            <button
+                type="button"
+                class="amount-reset"
+                [class.amount-reset--hidden]="amount() == null"
+                [disabled]="amount() == null"
+                (mousedown)="$event.preventDefault()"
+                (click)="resetAmount()"
+            >
+                ↺ Đặt lại
+            </button>
+        </div>
+        <!--
+            Hàng phím số và nút ⌫ luôn hiện (không bật/tắt theo focus hay
+            giá trị) nên không bao giờ làm trang co giãn dưới con trỏ chuột;
+            nút ⌫ nằm absolute trong ô nên hiện/ẩn cũng không đẩy layout.
+            mousedown.preventDefault: bấm không lấy focus khỏi ô số tiền, để
+            con trỏ vẫn ở trong ô và bàn phím điện thoại không bị đóng/mở
+            theo. (Lỗi "dưới 1.000" chỉ hiện sau khi bấm nút lưu — xem
+            showError — nên đang gõ dở không bị báo lỗi.)
+        -->
+        <div class="amount">
+            <input
+                id="tx-amount"
+                class="input input--amount"
+                appAmountInput
+                [maxIntegerDigits]="maxDigits"
+                placeholder="0"
+                formControlName="amount"
+                [attr.aria-invalid]="showError('amount')"
+            />
+            @if (amount() != null) {
+                <button
+                    type="button"
+                    class="amount__backspace"
+                    aria-label="Xóa chữ số cuối"
+                    title="Xóa chữ số cuối"
+                    (mousedown)="$event.preventDefault()"
+                    (click)="removeLastDigit()"
+                >
+                    ⌫
+                </button>
+            }
+        </div>
+        <div
+            class="keypad"
+            role="group"
+            aria-label="Bàn phím số"
+            (mousedown)="$event.preventDefault()"
+        >
+            @for (digit of digits; track digit) {
+                <button
+                    type="button"
+                    class="keypad__key"
+                    [attr.aria-label]="'Gõ số ' + digit"
+                    (click)="appendDigit(digit)"
+                >
+                    {{ digit }}
+                </button>
+            }
+        </div>
+        <div class="quick" (mousedown)="$event.preventDefault()">
             @for (value of quickAmounts; track value) {
                 <button type="button" class="chip" (click)="addAmount(value)">
                     +{{ value / 1000 }}k
                 </button>
             }
+            <!-- Gắn thêm số 0 vào cuối: 5 + "000" → 5.000. -->
+            @for (zeros of zeroKeys; track zeros) {
+                <button
+                    type="button"
+                    class="chip chip--zeros"
+                    [attr.aria-label]="'Thêm ' + zeros + ' số 0'"
+                    (click)="appendZeros(zeros)"
+                >
+                    {{ '0'.repeat(zeros) }}
+                </button>
+            }
         </div>
         @if (showError('amount')) {
             <p class="field__error">
-                Nhập số tiền từ {{ minAmount | vnd }} trở lên.
+                Nhập số tiền từ {{ minAmount | vnd }} đến {{ maxAmount | vnd }}.
             </p>
-        } @else if (amount()) {
-            <p class="field__hint">{{ amount() | vnd }}</p>
         }
     </div>
 
@@ -50,37 +114,33 @@
                     [style.--cat]="category.color"
                     (click)="selectCategory(category.id)"
                 >
-                    <span aria-hidden="true">{{ category.icon }}</span>
+                    <span class="category__icon" aria-hidden="true">{{
+                        category.icon
+                    }}</span>
                     {{ category.name }}
                 </button>
             }
         </div>
     </fieldset>
 
-    <div class="row">
-        <div class="field">
-            <label class="field__label" for="tx-date">Ngày</label>
-            <input
-                id="tx-date"
-                class="input"
-                type="date"
-                formControlName="date"
-            />
-            @if (showError('date')) {
-                <p class="field__error">Chọn ngày giao dịch.</p>
-            }
-        </div>
-        <div class="field">
-            <label class="field__label" for="tx-note">Ghi chú</label>
-            <input
-                id="tx-note"
-                class="input"
-                type="text"
-                maxlength="80"
-                placeholder="VD: Ăn trưa"
-                formControlName="note"
-            />
-        </div>
+    <div class="field">
+        <label class="field__label" for="tx-date">Ngày</label>
+        <input id="tx-date" class="input" type="date" formControlName="date" />
+        @if (showError('date')) {
+            <p class="field__error">Chọn ngày giao dịch.</p>
+        }
+    </div>
+
+    <div class="field">
+        <label class="field__label" for="tx-note">Ghi chú</label>
+        <input
+            id="tx-note"
+            class="input"
+            type="text"
+            maxlength="80"
+            [placeholder]="notePlaceholder()"
+            formControlName="note"
+        />
     </div>
 
     <div class="actions">

@@ -83,15 +83,19 @@ describe('App', () => {
             expect(el.querySelector('header app-month-picker')).toBeNull();
         });
 
-        it('switches between the spending and accounting modules', async () => {
-            const active = (el: HTMLElement) =>
-                el.querySelector('header .module--active')?.textContent?.trim();
+        it('shows a decorative illustration instead of a module switch', async () => {
+            const { el } = await render('/');
+            const art = el.querySelector('header svg.art');
+            expect(art?.getAttribute('aria-hidden')).toBe('true');
+            expect(el.querySelector('header .modules')).toBeNull();
+            // Logo dẫn về trang chính, thay cho nút "Chi tiêu" cũ.
+            expect(
+                el.querySelector('header a.brand')?.getAttribute('href'),
+            ).toBe('/');
+        });
 
-            let { el } = await render('/nam');
-            expect(active(el)).toBe('Chi tiêu');
-
-            ({ el } = await render('/ke-toan'));
-            expect(active(el)).toBe('Kế toán');
+        it('still serves the accounting page at /ke-toan', async () => {
+            const { el } = await render('/ke-toan');
             expect(el.querySelector('app-accounting-page')).not.toBeNull();
             expect(el.querySelector('main .toolbar')).toBeNull();
         });

@@ -5,10 +5,6 @@
 }
 
 .day__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-2);
     padding: 0 var(--space-3) var(--space-2);
     border-bottom: 1px solid var(--border);
 }
@@ -18,17 +14,6 @@
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ink-muted);
-}
-
-.day__net {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink-muted);
-}
-
-.day__net--positive {
-    color: var(--income);
 }
 
 .day__items {

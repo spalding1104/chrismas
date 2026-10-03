@@ -1,7 +1,8 @@
 // Kiểm tra style chỉ dùng design token (src/styles/_tokens.scss).
 // Báo lỗi khi viết cứng màu, hoặc viết cứng số cho các thuộc tính đã có
 // token (khoảng cách, bo góc, cỡ chữ, hiệu ứng, bóng đổ, z-index), hoặc
-// dùng @media với px thay cho mixin from()/below().
+// dùng @media với px thay cho mixin from()/below(), hoặc dùng var(--x) mà
+// --x không được khai báo ở đâu cả.
 // Được phép: khai báo biến CSS riêng của component (`--ten: 14px;`), 0 và 1px.
 import { readFileSync, globSync } from 'node:fs';
 
@@ -18,6 +19,22 @@ const files = globSync(['src/**/*.scss', 'src/app/**/*.ts']).filter(
     (f) => f.replaceAll('\\', '/') !== TOKENS_FILE && !f.endsWith('.spec.ts'),
 );
 
+// Mọi biến CSS được khai báo ở đâu đó: `--ten:` trong scss/ts, hoặc gán từ
+// template qua `[style.--ten]`. Dùng var(--ten) không có trong tập này là
+// gõ sai/token không tồn tại — trình duyệt lặng lẽ bỏ cả dòng khai báo.
+const defined = new Set();
+for (const file of globSync([
+    'src/**/*.scss',
+    'src/**/*.ts',
+    'src/**/*.html',
+])) {
+    const raw = readFileSync(file, 'utf8');
+    for (const m of raw.matchAll(/(?:^|[\s{;'"])(--[\w-]+)\s*:/g)) {
+        defined.add(m[1]);
+    }
+    for (const m of raw.matchAll(/style\.(--[\w-]+)/g)) defined.add(m[1]);
+}
+
 const problems = [];
 for (const file of files) {
     const raw = readFileSync(file, 'utf8');
@@ -28,6 +45,12 @@ for (const file of files) {
     const lineOf = (index) => text.slice(0, index).split('\n').length;
     const report = (index, message) =>
         problems.push(`${file}:${lineOf(index)}  ${message}`);
+
+    for (const m of text.matchAll(/var\((--[\w-]+)/g)) {
+        if (!defined.has(m[1])) {
+            report(m.index, `var(${m[1]})  → token không tồn tại`);
+        }
+    }
 
     for (const m of text.matchAll(/@media[^{]*\d+px[^{]*\{/g)) {
         report(m.index, `${m[0].trim()}  → dùng @include from()/below()`);
@@ -53,9 +76,7 @@ for (const file of files) {
 }
 
 if (problems.length) {
-    console.error(
-        `Có ${problems.length} giá trị viết cứng (xem ${TOKENS_FILE}):\n`,
-    );
+    console.error(`Có ${problems.length} lỗi token (xem ${TOKENS_FILE}):\n`);
     console.error(problems.map((p) => '  ' + p).join('\n'));
     process.exit(1);
 }

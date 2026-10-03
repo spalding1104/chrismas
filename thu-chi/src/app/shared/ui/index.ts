@@ -1,3 +1,4 @@
+export * from './amount-input/amount-input';
 export * from './card/card';
 export * from './charts/bar-chart/bar-chart';
 export * from './charts/chart.model';

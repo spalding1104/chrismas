@@ -88,6 +88,26 @@ h3 {
     }
 }
 
+/* Mũi tên mặc định của trình duyệt dính sát mép phải: tự vẽ lại bằng 2
+   gradient (không dùng ảnh SVG để màu theo token, đổi được sáng/tối), cách
+   mép phải đúng bằng lề trái của chữ. */
+select.input {
+    --chevron-size: 5px;
+    --chevron-color: var(--ink-muted);
+
+    appearance: none;
+    padding-right: calc(var(--space-3) * 2 + var(--chevron-size) * 2);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--chevron-color) 50%),
+        linear-gradient(135deg, var(--chevron-color) 50%, transparent 50%);
+    background-position:
+        calc(100% - var(--space-3) - var(--chevron-size)) 50%,
+        calc(100% - var(--space-3)) 50%;
+    background-size: var(--chevron-size) var(--chevron-size);
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
 /* ---------- Buttons ---------- */
 .btn {
     display: inline-flex;

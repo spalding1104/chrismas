@@ -1,8 +1,11 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    TemplateRef,
     computed,
     input,
+    output,
     signal,
 } from '@angular/core';
 
@@ -19,6 +22,7 @@ import {
  */
 @Component({
     selector: 'app-bar-chart',
+    imports: [NgTemplateOutlet],
     templateUrl: './bar-chart.html',
     styleUrl: './bar-chart.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +32,18 @@ export class BarChart {
     readonly formatValue = input<ValueFormatter>(defaultFormatter);
     readonly formatTick = input<ValueFormatter>(defaultFormatter);
     readonly ariaLabel = input('Biểu đồ cột');
+    /** Hàng đang được chọn (bấm vào để xem chi tiết) — tô đậm nếu có. */
+    readonly selectedId = input<string | null>(null);
+    /** Bấm vào một hàng. Component cha quyết định bật/tắt lựa chọn. */
+    readonly select = output<string>();
+    /**
+     * Nội dung đổ ra ngay dưới hàng đang chọn (vd. chi tiết giao dịch).
+     * Component này không biết nội dung đó là gì — chỉ render template của
+     * component cha, kèm context là `ChartDatum` của hàng đang chọn.
+     */
+    readonly detailTemplate = input<TemplateRef<{
+        $implicit: ChartDatum;
+    }> | null>(null);
 
     protected readonly total = computed(() =>
         this.data().reduce((s, d) => s + d.value, 0),

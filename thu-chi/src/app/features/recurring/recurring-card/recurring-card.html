@@ -1,0 +1,112 @@
+@if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+}
+
+@for (group of groups(); track group.type) {
+    <section class="group">
+        <header class="group__head">
+            <h3 class="group__title">{{ group.title }}</h3>
+            <span
+                class="group__total"
+                [class.group__total--income]="group.type === 'income'"
+                >{{ group.total | vnd }}/tháng</span
+            >
+        </header>
+        <ul class="list">
+            @for (item of group.items; track item.id) {
+                @if (editing() === item.id) {
+                    <li>
+                        <app-recurring-form
+                            [item]="editingItem()"
+                            (saved)="onSaved($event)"
+                            (cancelled)="editing.set(null)"
+                        />
+                    </li>
+                } @else {
+                    <li class="item">
+                        <span
+                            class="item__icon"
+                            [style.--cat]="findCategory(item.categoryId).color"
+                            aria-hidden="true"
+                            >{{ findCategory(item.categoryId).icon }}</span
+                        >
+                        <span class="item__info">
+                            <span class="item__title">{{
+                                item.note || findCategory(item.categoryId).name
+                            }}</span>
+                            <span
+                                class="item__meta"
+                                [title]="findCategory(item.categoryId).name"
+                                >Ngày {{ item.day }} hằng tháng</span
+                            >
+                        </span>
+                        <span
+                            class="item__amount"
+                            [class.item__amount--income]="
+                                item.type === 'income'
+                            "
+                            >{{ item.amount | vnd }}</span
+                        >
+                        <span class="item__tools">
+                            <button
+                                type="button"
+                                class="tool"
+                                [attr.aria-label]="
+                                    'Sửa ' +
+                                    (item.note ||
+                                        findCategory(item.categoryId).name)
+                                "
+                                (click)="startEdit(item.id)"
+                            >
+                                Sửa
+                            </button>
+                            <button
+                                type="button"
+                                class="tool tool--danger"
+                                [class.tool--confirm]="
+                                    confirmingId() === item.id
+                                "
+                                (click)="onRemove(item.id)"
+                            >
+                                {{
+                                    confirmingId() === item.id
+                                        ? 'Chắc chắn?'
+                                        : 'Xóa'
+                                }}
+                            </button>
+                        </span>
+                    </li>
+                }
+            }
+        </ul>
+    </section>
+} @empty {
+    @if (editing() !== 'new') {
+        <p class="empty">
+            Chưa có khoản cố định nào. Thêm các khoản tháng nào cũng có như
+            Spotify, cước điện thoại, tiền nhà, lương… để tự tính vào mỗi tháng.
+        </p>
+    }
+}
+
+@if (editing() === 'new') {
+    <app-recurring-form
+        (saved)="onSaved($event)"
+        (cancelled)="editing.set(null)"
+    />
+} @else {
+    <button
+        type="button"
+        class="btn btn--ghost btn--sm add"
+        (click)="startAdd()"
+    >
+        + Thêm khoản cố định
+    </button>
+}
+
+@if (groups().length) {
+    <p class="hint">
+        Sửa hoặc xóa áp dụng từ {{ monthLabel() }} trở đi; các tháng trước giữ
+        nguyên.
+    </p>
+}

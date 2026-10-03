@@ -14,6 +14,11 @@ export interface Transaction {
      * "Xóa dữ liệu mẫu".
      */
     isSample?: boolean;
+    /**
+     * Có giá trị khi đây là khoản cố định hằng tháng do frontend tự tính ra
+     * (không có trong DB) — id của RecurringItem. Không sửa/xóa trực tiếp.
+     */
+    recurringId?: string;
 }
 
 export type TransactionDraft = Omit<Transaction, 'id' | 'isSample'>;

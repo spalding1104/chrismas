@@ -7,8 +7,9 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { AuthStore } from '../auth/auth.store';
-import { Transaction, User } from '../models';
-import { toMonthKey } from '../utils/date.util';
+import { RecurringItem, Transaction, User } from '../models';
+import { shiftMonth, toMonthKey } from '../utils/date.util';
+import { RecurringStore } from './recurring.store';
 import { TRANSACTIONS_API, TransactionStore } from './transaction.store';
 
 describe('TransactionStore', () => {
@@ -17,6 +18,8 @@ describe('TransactionStore', () => {
     const month = toMonthKey(new Date());
     const alice: User = { id: 'a', email: 'a@test.vn' };
     const user = signal<User | null>(alice);
+    // RecurringStore có test riêng; ở đây chỉ cần danh sách khoản cố định.
+    const recurringItems = signal<RecurringItem[]>([]);
 
     const tx = (id: string, fields: Partial<Transaction>): Transaction => ({
         id,
@@ -32,11 +35,16 @@ describe('TransactionStore', () => {
 
     async function setup(initial: Transaction[]): Promise<void> {
         user.set(alice);
+        recurringItems.set([]);
         TestBed.configureTestingModule({
             providers: [
                 provideHttpClient(),
                 provideHttpClientTesting(),
                 { provide: AuthStore, useValue: { user } },
+                {
+                    provide: RecurringStore,
+                    useValue: { items: recurringItems },
+                },
             ],
         });
         http = TestBed.inject(HttpTestingController);
@@ -47,6 +55,48 @@ describe('TransactionStore', () => {
     }
 
     afterEach(() => http.verify());
+
+    it('counts monthly recurring items in month and year figures', async () => {
+        await setup([tx('real', { amount: 100_000 })]);
+        recurringItems.set([
+            {
+                id: 'spotify',
+                type: 'expense',
+                amount: 59_000,
+                categoryId: 'subscriptions',
+                note: 'Spotify',
+                day: 31,
+                startMonth: month,
+                endMonth: null,
+            },
+            {
+                id: 'salary',
+                type: 'income',
+                amount: 10_000_000,
+                categoryId: 'salary',
+                note: '',
+                day: 5,
+                // Đã ngừng từ tháng trước: không tính vào tháng này.
+                startMonth: shiftMonth(month, -3),
+                endMonth: shiftMonth(month, -1),
+            },
+        ]);
+
+        expect(store.totalExpense()).toBe(159_000);
+        expect(store.totalIncome()).toBe(0);
+        const spotify = store
+            .monthTransactions()
+            .find((t) => t.recurringId === 'spotify')!;
+        // Ngày 31 dồn về ngày cuối của tháng nếu tháng ngắn hơn.
+        const lastDay = new Date(
+            Number(month.slice(0, 4)),
+            Number(month.slice(5)),
+            0,
+        ).getDate();
+        expect(spotify.date).toBe(`${month}-${lastDay}`);
+        // Khoản cố định không phải dòng thật trong DB.
+        expect(store.transactions().map((t) => t.id)).toEqual(['real']);
+    });
 
     it('clears data on logout and reloads for the next account', async () => {
         await setup([tx('alice-1', {})]);

@@ -15,13 +15,50 @@
 
     <section class="block">
         <h3 class="block__title">So sánh theo số tiền</h3>
+        <p class="block__hint">Bấm vào một danh mục để xem chi tiết.</p>
         <app-bar-chart
             [data]="ranked()"
             [formatValue]="formatValue"
             [formatTick]="formatTick"
+            [selectedId]="selectedId()"
+            [detailTemplate]="detailTpl"
             ariaLabel="Số tiền theo danh mục"
+            (select)="toggleSelection($event)"
         />
     </section>
 } @else {
     <app-empty-state icon="📊" [message]="emptyMessage()" />
 }
+
+<!--
+    Đổ ngay dưới hàng vừa bấm trong app-bar-chart (xem detailTemplate ở đó),
+    không nằm cố định cuối trang. Không lặp lại tên danh mục — hàng phía
+    trên đã ghi rồi — chỉ còn viền màu bên trái (lấy từ d.color) để vẫn
+    thấy rõ chi tiết này thuộc hàng nào. Không có nút đóng: bấm lại hàng đó
+    (hoặc Enter/Space khi đang focus) để đóng.
+-->
+<ng-template #detailTpl let-d>
+    <div class="detail" [style.--cat]="d.color">
+        @if (detailItems().length) {
+            <ul class="detail__list">
+                @for (tx of detailItems(); track tx.id) {
+                    <li class="detail__item">
+                        <span class="detail__date">{{
+                            tx.date | dayLabel
+                        }}</span>
+                        <span class="detail__note">{{
+                            tx.note || d.label
+                        }}</span>
+                        <span class="detail__amount">{{
+                            tx.amount | vnd
+                        }}</span>
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="detail__empty">
+                Không có chi tiết giao dịch cho danh mục này.
+            </p>
+        }
+    </div>
+</ng-template>

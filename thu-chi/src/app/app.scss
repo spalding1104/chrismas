@@ -46,45 +46,80 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-}
-
-.brand__mark {
-    display: grid;
-    place-items: center;
-    width: var(--icon-box-md);
-    height: var(--icon-box-md);
     border-radius: var(--radius-md);
-    background: var(--accent);
-    color: var(--on-accent);
-    font-size: var(--icon-size-lg);
-    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+
+    @include focus-ring(var(--space-1));
 }
 
 .brand__name {
     margin: 0;
     font-size: var(--text-lg);
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.brand__tag {
-    margin: 0;
-    color: var(--ink-muted);
-    font-size: var(--text-xs);
+/* Hình minh họa trong logo; nhỏ lại một chút trên màn hẹp. */
+.art {
+    --art-height: 36px;
+    --art-height-sm: 28px;
+    --twinkle-duration: 2.4s;
+
+    flex: none;
+    height: var(--art-height);
+    width: auto;
+    overflow: visible;
+
+    @include below(sm) {
+        height: var(--art-height-sm);
+    }
 }
 
-.modules {
-    @include segmented-track;
+.art__coin {
+    fill: var(--series-4);
 }
 
-.module {
-    @include segmented-item;
-
-    padding: var(--space-1-5) var(--space-4);
-    text-decoration: none;
+.art__coin-top {
+    fill: color-mix(in srgb, var(--series-4) 55%, var(--surface));
 }
 
-.module--active {
-    @include segmented-item-active;
+.art__trend {
+    fill: none;
+    stroke: var(--income);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.art__arrow {
+    fill: var(--income);
+}
+
+.art__sparkle {
+    fill: var(--accent);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: twinkle var(--twinkle-duration) var(--ease) infinite;
+}
+
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .art__sparkle {
+        animation: none;
+    }
 }
 
 .account {

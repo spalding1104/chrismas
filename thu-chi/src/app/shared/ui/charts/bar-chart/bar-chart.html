@@ -21,14 +21,22 @@
             tabindex="0"
             [class.row--dim]="activeId() && activeId() !== d.id"
             [class.row--active]="activeId() === d.id"
+            [class.row--selected]="selectedId() === d.id"
+            [attr.aria-selected]="selectedId() === d.id"
+            [title]="'Xem chi tiết ' + d.label"
             (pointerenter)="activeId.set(d.id)"
             (pointerleave)="activeId.set(null)"
             (focus)="activeId.set(d.id)"
             (blur)="activeId.set(null)"
+            (click)="select.emit(d.id)"
+            (keydown.enter)="select.emit(d.id)"
+            (keydown.space)="select.emit(d.id); $event.preventDefault()"
         >
             <span class="label" role="rowheader">
                 @if (d.icon) {
-                    <span aria-hidden="true">{{ d.icon }}</span>
+                    <span class="label__icon" aria-hidden="true">{{
+                        d.icon
+                    }}</span>
                 }
                 <span class="label__text">{{ d.label }}</span>
             </span>
@@ -61,5 +69,14 @@
                 <small>{{ share(d.value) }}</small>
             </span>
         </div>
+
+        @if (selectedId() === d.id && detailTemplate(); as tpl) {
+            <div class="row-detail" role="row">
+                <ng-container
+                    [ngTemplateOutlet]="tpl"
+                    [ngTemplateOutletContext]="{ $implicit: d }"
+                />
+            </div>
+        }
     }
 </div>

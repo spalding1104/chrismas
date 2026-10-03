@@ -7,20 +7,19 @@ import {
 } from '@angular/core';
 
 import { Transaction } from '../../../core/models';
-import { DayLabelPipe, VndPipe } from '../../../shared/pipes';
+import { DayLabelPipe } from '../../../shared/pipes';
 import { EmptyState } from '../../../shared/ui';
 import { TransactionItem } from '../transaction-item/transaction-item';
 
 interface DayGroup {
     date: string;
-    net: number;
     items: Transaction[];
 }
 
-/** Danh sách giao dịch nhóm theo ngày, kèm tổng thu/chi ròng của từng ngày. */
+/** Danh sách giao dịch nhóm theo ngày. */
 @Component({
     selector: 'app-transaction-list',
-    imports: [TransactionItem, EmptyState, DayLabelPipe, VndPipe],
+    imports: [TransactionItem, EmptyState, DayLabelPipe],
     templateUrl: './transaction-list.html',
     styleUrl: './transaction-list.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,13 +36,8 @@ export class TransactionList {
     protected readonly groups = computed<DayGroup[]>(() => {
         const byDate = new Map<string, DayGroup>();
         for (const t of this.transactions()) {
-            const group = byDate.get(t.date) ?? {
-                date: t.date,
-                net: 0,
-                items: [],
-            };
+            const group = byDate.get(t.date) ?? { date: t.date, items: [] };
             group.items.push(t);
-            group.net += t.type === 'income' ? t.amount : -t.amount;
             byDate.set(t.date, group);
         }
         return [...byDate.values()];

@@ -11,10 +11,12 @@ import {
     TransactionDraft,
     TransactionType,
 } from '../../core/models';
+import { RecurringStore } from '../../core/state/recurring.store';
 import { TransactionStore } from '../../core/state/transaction.store';
 import { defaultDateFor } from '../../core/utils/date.util';
 import { formatVnd } from '../../shared/pipes';
 import { Card, SegmentOption, SegmentedControl } from '../../shared/ui';
+import { RecurringCard } from '../recurring';
 import { CategoryChart, SummaryOverview } from '../summary';
 import { TransactionForm, TransactionList } from '../transactions';
 
@@ -33,6 +35,7 @@ type ListFilter = 'all' | TransactionType;
         CategoryChart,
         TransactionForm,
         TransactionList,
+        RecurringCard,
     ],
     templateUrl: './dashboard-page.html',
     styleUrl: './dashboard-page.scss',
@@ -40,6 +43,7 @@ type ListFilter = 'all' | TransactionType;
 })
 export class DashboardPage {
     protected readonly store = inject(TransactionStore);
+    protected readonly recurring = inject(RecurringStore);
 
     protected readonly editing = signal<Transaction | null>(null);
     protected readonly listFilter = signal<ListFilter>('all');

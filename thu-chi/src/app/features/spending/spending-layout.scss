@@ -13,17 +13,32 @@
     margin-bottom: var(--space-5);
 }
 
+/* Nằm thẳng trên nền trang (không có card bọc), nên khung tab dùng nền
+   trắng + viền thay cho xám nhạt — xám nhạt trùng tông nền trang, bị chìm. */
 .tabs {
     @include segmented-track;
+
+    border: 1px solid var(--border);
+    background: var(--surface);
 }
 
 .tab {
     @include segmented-item;
 
-    padding: var(--space-1-5) var(--space-4);
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-md);
+    font-weight: 600;
     text-decoration: none;
 }
 
+/* Tab đang xem tô màu nhấn — nổi hơn kiểu "nền trắng" dùng chung, vì đây
+   là điều hướng chính của phân hệ. */
 .tab--active {
-    @include segmented-item-active;
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+        color: var(--on-accent);
+    }
 }

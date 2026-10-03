@@ -9,23 +9,30 @@
     {{ signedAmount() | vnd: 'always' }}
 </span>
 <div class="tools">
-    <button
-        type="button"
-        class="tool"
-        (click)="edit.emit(transaction())"
-        aria-label="Sửa giao dịch"
-    >
-        Sửa
-    </button>
-    <button
-        type="button"
-        class="tool tool--danger"
-        [class.tool--confirm]="confirming()"
-        (click)="onRemove()"
-        [attr.aria-label]="
-            confirming() ? 'Bấm lần nữa để xóa' : 'Xóa giao dịch'
-        "
-    >
-        {{ confirming() ? 'Chắc chắn?' : 'Xóa' }}
-    </button>
+    @if (transaction().recurringId) {
+        <!-- Khoản cố định tự tính ra: sửa/xóa ở card "Khoản cố định". -->
+        <span class="badge" title="Sửa hoặc xóa trong card Khoản cố định">
+            Cố định
+        </span>
+    } @else {
+        <button
+            type="button"
+            class="tool"
+            (click)="edit.emit(transaction())"
+            aria-label="Sửa giao dịch"
+        >
+            Sửa
+        </button>
+        <button
+            type="button"
+            class="tool tool--danger"
+            [class.tool--confirm]="confirming()"
+            (click)="onRemove()"
+            [attr.aria-label]="
+                confirming() ? 'Bấm lần nữa để xóa' : 'Xóa giao dịch'
+            "
+        >
+            {{ confirming() ? 'Chắc chắn?' : 'Xóa' }}
+        </button>
+    }
 </div>

@@ -6,10 +6,12 @@
     gap: var(--space-2);
 }
 
+/* Kỳ đang xem: chữ lớn, đậm để là điểm nhìn chính của thanh công cụ. */
 .label {
     min-width: 128px;
     text-align: center;
-    font-weight: 600;
+    font-size: var(--text-lg);
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
@@ -29,6 +31,24 @@
     height: var(--control-height);
     padding-inline: var(--space-3);
     font-size: var(--text-sm);
+    white-space: nowrap;
+}
+
+/* Khung trắng có viền quanh kỳ đang xem — YearPicker dùng bản tĩnh này
+   (không có bảng chọn), MonthPicker dùng .label--button bên dưới. Hai bên
+   cùng cao, viền, nền để thanh Tháng/Năm nhìn giống nhau khi đổi tab. */
+.label--box,
+.label--button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1-5);
+    height: var(--control-height);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    color: var(--ink);
 }
 
 /* Phần dưới chỉ dùng cho MonthPicker (YearPicker dùng chung file này). */
@@ -38,31 +58,22 @@
 }
 
 .label--button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1-5);
-    height: var(--control-height);
-    padding-inline: var(--space-2-5);
-    border: 0;
-    border-radius: var(--radius-control);
-    background: transparent;
-    color: var(--ink);
     font: inherit;
-    font-weight: 600;
+    font-size: var(--text-lg);
+    font-weight: 700;
     cursor: pointer;
     transition: background var(--duration-fast);
 
     &:hover,
     &[aria-expanded='true'] {
-        background: var(--surface-muted);
+        background: var(--accent-soft);
     }
 
     @include focus-ring;
 }
 
 .caret {
-    color: var(--ink-muted);
+    color: var(--accent);
     font-size: var(--icon-size-xs);
 }
 

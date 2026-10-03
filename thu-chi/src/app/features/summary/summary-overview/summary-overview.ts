@@ -13,14 +13,14 @@ import { StatCard } from '../../../shared/ui';
     template: `
         <app-stat-card
             label="Tổng thu"
-            icon="↓"
+            icon="↑"
             tone="income"
             [amount]="income()"
             [hint]="incomeHint()"
         />
         <app-stat-card
             label="Tổng chi"
-            icon="↑"
+            icon="↓"
             tone="expense"
             [amount]="expense()"
             [hint]="expenseHint()"
@@ -49,9 +49,12 @@ export class SummaryOverview {
     readonly expenseCount = input(0);
 
     protected readonly balance = computed(() => this.income() - this.expense());
-    protected readonly balanceTone = computed(() =>
-        this.balance() < 0 ? 'expense' : 'neutral',
-    );
+    // Dương xanh lá, âm đỏ, bằng 0 giữ màu chữ thường. Không chỉ dựa vào
+    // màu: số âm luôn có dấu "-" phía trước.
+    protected readonly balanceTone = computed(() => {
+        const balance = this.balance();
+        return balance > 0 ? 'income' : balance < 0 ? 'expense' : 'neutral';
+    });
 
     protected readonly incomeHint = computed(
         () => `${this.incomeCount()} khoản thu`,

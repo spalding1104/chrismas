@@ -25,8 +25,11 @@
     --hover-wash: color-mix(in srgb, var(--ink) 6%, transparent);
 
     /* ---------- Màu biểu đồ ----------
-       Thứ tự đã kiểm tra an toàn cho người mù màu: giữ nguyên thứ tự,
-       danh mục thứ 8 trở đi dùng --series-other. */
+       Thứ tự đã kiểm tra (scripts/validate_palette của skill dataviz, cả
+       sáng lẫn tối) theo từng cặp KỀ NHAU, kể cả cặp cuối với
+       --series-other: giữ nguyên thứ tự. Các slot không kề nhau có thể gần
+       màu, nên biểu đồ luôn kèm icon + tên. Thêm màu thì kiểm tra lại;
+       quá 10 thì dùng --series-other. */
     --series-1: #2a78d6;
     --series-2: #eb6834;
     --series-3: #1baf7a;
@@ -34,6 +37,9 @@
     --series-5: #e87ba4;
     --series-6: #008300;
     --series-7: #4a3aa7;
+    --series-8: #8b333f;
+    --series-9: #bb2d8c;
+    --series-10: #a46bf5;
     --series-other: #9aa1ab;
     --grid: #e8ecea;
 
@@ -129,6 +135,9 @@
     --series-5: #d55181;
     --series-6: #008300;
     --series-7: #9085e9;
+    --series-8: #a14206;
+    --series-9: #913f82;
+    --series-10: #7855df;
     --series-other: #6f7883;
     --grid: #28303a;
     --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);

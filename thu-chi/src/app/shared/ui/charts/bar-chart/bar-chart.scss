@@ -93,9 +93,18 @@
 
 .row {
     padding-block: var(--row-padding);
+    padding-inline: var(--space-1-5);
+    margin-inline: calc(var(--space-1-5) * -1);
     border-radius: var(--radius-sm);
     outline: none;
-    transition: opacity var(--duration-fast);
+    cursor: pointer;
+    transition:
+        opacity var(--duration-fast),
+        background var(--duration-fast);
+
+    &:hover {
+        background: var(--hover-wash);
+    }
 
     &:focus-visible {
         box-shadow: 0 0 0 var(--focus-width) var(--accent);
@@ -106,12 +115,29 @@
     opacity: var(--opacity-dim);
 }
 
+.row--selected {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.row-detail {
+    padding: var(--space-2) var(--space-1-5) var(--space-1);
+    margin-inline: calc(var(--space-1-5) * -1);
+}
+
 .label {
     display: flex;
     align-items: center;
     gap: var(--space-1-5);
     min-width: 0;
     font-size: var(--text-sm);
+}
+
+.label__icon {
+    /* Chiều rộng cố định: icon emoji rộng hẹp khác nhau, không có ô này thì
+       chữ mỗi hàng lệch một kiểu, nhìn không thẳng cột. */
+    flex: none;
+    width: var(--icon-size-md);
+    text-align: center;
 }
 
 .label__text {

@@ -93,6 +93,16 @@
     @include focus-ring(0);
 }
 
+.badge {
+    padding: var(--space-0-5) var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
 .tool--danger:hover,
 .tool--confirm {
     color: var(--expense);

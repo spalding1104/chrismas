@@ -1,0 +1,168 @@
+@use '../../../shared/styles/mixins' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.error {
+    @include notice(expense);
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.group__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: var(--space-1-5);
+    border-bottom: 1px solid var(--border);
+}
+
+.group__title {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.group__total {
+    color: var(--expense);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.group__total--income {
+    color: var(--income);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* 2 dòng: icon | tên / ngày | số tiền / nút Sửa·Xóa ngay dưới số tiền. */
+.item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+        'icon info amount'
+        'icon info tools';
+    align-items: center;
+    column-gap: var(--space-2-5);
+    row-gap: var(--space-0-5);
+    padding: var(--space-2) 0;
+
+    & + & {
+        border-top: 1px solid var(--border);
+    }
+}
+
+.item__icon {
+    grid-area: icon;
+    display: grid;
+    place-items: center;
+    width: var(--icon-box-sm);
+    height: var(--icon-box-sm);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--cat) 16%, var(--surface));
+    font-size: var(--icon-size-sm);
+}
+
+.item__info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.item__title {
+    overflow: hidden;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item__meta {
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+.item__amount {
+    grid-area: amount;
+    justify-self: end;
+    color: var(--expense);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.item__amount--income {
+    color: var(--income);
+}
+
+.item__tools {
+    grid-area: tools;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-0-5);
+    /* Kéo sát mép phải, thẳng hàng với số tiền phía trên. */
+    margin-right: calc(var(--space-2) * -1);
+}
+
+.tool {
+    padding: var(--space-0-5) var(--space-2);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+
+    &:hover {
+        background: var(--surface-muted);
+        color: var(--ink);
+    }
+
+    @include focus-ring(0);
+}
+
+.tool--danger:hover,
+.tool--confirm {
+    color: var(--expense);
+}
+
+.tool--confirm {
+    background: var(--expense-soft);
+    font-weight: 600;
+}
+
+.empty,
+.hint {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+}
+
+.hint {
+    font-size: var(--text-xs);
+}
+
+.add {
+    align-self: flex-start;
+}

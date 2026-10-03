@@ -47,6 +47,26 @@
                 (cancelled)="editing.set(null)"
             />
         </app-card>
+
+        <app-card
+            heading="Khoản cố định hằng tháng"
+            subheading="Tự tính vào mỗi tháng"
+        >
+            <app-recurring-card
+                [items]="recurring.items()"
+                [month]="store.selectedMonth()"
+                [error]="recurring.error()"
+                (create)="recurring.add($event, store.selectedMonth())"
+                (update)="
+                    recurring.update(
+                        $event.id,
+                        $event.draft,
+                        store.selectedMonth()
+                    )
+                "
+                (remove)="recurring.remove($event, store.selectedMonth())"
+            />
+        </app-card>
     </div>
 
     <div class="layout__main">
@@ -60,7 +80,10 @@
                 [options]="breakdownOptions"
                 [(value)]="breakdownType"
             />
-            <app-category-chart [items]="breakdownItems()" />
+            <app-category-chart
+                [items]="breakdownItems()"
+                [transactions]="store.monthTransactions()"
+            />
         </app-card>
 
         <app-card

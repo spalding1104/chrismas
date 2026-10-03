@@ -16,7 +16,9 @@ import {
         >
             ‹
         </button>
-        <span class="label" aria-live="polite">Năm {{ year() }}</span>
+        <span class="label label--box" aria-live="polite"
+            >Năm {{ year() }}</span
+        >
         <button
             type="button"
             class="nav"
