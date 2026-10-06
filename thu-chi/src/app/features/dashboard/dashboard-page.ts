@@ -12,11 +12,14 @@ import {
     TransactionType,
 } from '../../core/models';
 import { RecurringStore } from '../../core/state/recurring.store';
+import { SavingsStore } from '../../core/state/savings.store';
 import { TransactionStore } from '../../core/state/transaction.store';
+import { goalFor } from '../../core/utils/budget.util';
 import { defaultDateFor } from '../../core/utils/date.util';
 import { formatVnd } from '../../shared/pipes';
 import { Card, SegmentOption, SegmentedControl } from '../../shared/ui';
 import { RecurringCard } from '../recurring';
+import { SavingsGoalCard } from '../savings';
 import { CategoryChart, SummaryOverview } from '../summary';
 import { TransactionForm, TransactionList } from '../transactions';
 
@@ -36,6 +39,7 @@ type ListFilter = 'all' | TransactionType;
         TransactionForm,
         TransactionList,
         RecurringCard,
+        SavingsGoalCard,
     ],
     templateUrl: './dashboard-page.html',
     styleUrl: './dashboard-page.scss',
@@ -44,6 +48,7 @@ type ListFilter = 'all' | TransactionType;
 export class DashboardPage {
     protected readonly store = inject(TransactionStore);
     protected readonly recurring = inject(RecurringStore);
+    protected readonly savings = inject(SavingsStore);
 
     protected readonly editing = signal<Transaction | null>(null);
     protected readonly listFilter = signal<ListFilter>('all');
@@ -61,6 +66,18 @@ export class DashboardPage {
 
     protected readonly defaultDate = computed(() =>
         defaultDateFor(this.store.selectedMonth()),
+    );
+
+    protected readonly savingsGoal = computed(() =>
+        goalFor(this.savings.goals(), this.store.selectedMonth()),
+    );
+
+    /** Chi cố định của tháng (giao dịch ảo từ RecurringStore). */
+    protected readonly fixedExpense = computed(() =>
+        this.store
+            .monthTransactions()
+            .filter((t) => t.recurringId && t.type === 'expense')
+            .reduce((sum, t) => sum + t.amount, 0),
     );
 
     protected readonly incomeCount = computed(() => this.countOf('income'));

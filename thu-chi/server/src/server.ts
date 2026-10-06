@@ -7,6 +7,7 @@ import { authRouter, requireAuth } from './auth.ts';
 import { cvpPlansRouter } from './cvp-plans.ts';
 import { migrate } from './db.ts';
 import { recurringRouter } from './recurring.ts';
+import { savingsGoalsRouter } from './savings-goals.ts';
 import { transactionsRouter } from './transactions.ts';
 
 const port = Number(process.env['PORT'] ?? 3000);
@@ -20,6 +21,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/transactions', requireAuth, transactionsRouter);
 app.use('/api/cvp-plans', requireAuth, cvpPlansRouter);
 app.use('/api/recurring', requireAuth, recurringRouter);
+app.use('/api/savings-goals', requireAuth, savingsGoalsRouter);
 app.use('/api', (_req, res) => {
     res.status(404).json({ error: 'Không tìm thấy' });
 });

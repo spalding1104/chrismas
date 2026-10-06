@@ -1,0 +1,100 @@
+@if (error(); as message) {
+<p class="error" role="alert">{{ message }}</p>
+}
+
+@if (editing()) {
+<form [formGroup]="form" (ngSubmit)="submit()" class="form" novalidate>
+    <div class="field">
+        <label class="field__label" for="goal-amount">Số tiền muốn tiết kiệm mỗi tháng</label>
+        <input id="goal-amount" class="input" appAmountInput [maxIntegerDigits]="maxDigits" placeholder="0"
+            formControlName="amount" [attr.aria-invalid]="showError()" />
+    </div>
+    @if (suggestions().length) {
+    <div class="suggestions">
+        <span class="suggestions__label">Gợi ý theo thu nhập:</span>
+        @for (s of suggestions(); track s.rate) {
+        <button type="button" class="chip" (click)="useSuggestion(s.amount)">
+            {{ s.rate }}% · {{ s.amount | vnd }}
+        </button>
+        }
+    </div>
+    }
+    @if (showError()) {
+    <p class="field__error">
+        Nhập số tiền từ {{ minAmount | vnd }} đến {{ maxAmount | vnd }}.
+    </p>
+    }
+    <p class="hint">
+        Áp dụng từ {{ monthLabel() }} trở đi; các tháng trước giữ nguyên.
+    </p>
+    <div class="actions">
+        @if (goal()) {
+        <button type="button" class="btn btn--ghost btn--sm actions__clear" (click)="clearGoal()">
+            Bỏ mục tiêu
+        </button>
+        }
+        <button type="button" class="btn btn--ghost" (click)="cancel()">
+            Hủy
+        </button>
+        <button type="submit" class="btn btn--primary">Lưu mục tiêu</button>
+    </div>
+</form>
+} @else if (budget(); as b) {
+<dl class="figures">
+    <div class="figure">
+        <dt class="figure__label">Muốn tiết kiệm</dt>
+        <dd class="figure__value">{{ b.goal | vnd }}</dd>
+        <dd class="figure__hint">Từ {{ sinceLabel() }}</dd>
+    </div>
+    <div class="figure">
+        <dt class="figure__label">Được tiêu trong tháng</dt>
+        <dd class="figure__value">{{ b.limit | vnd }}</dd>
+        <dd class="figure__hint">
+            Thu {{ b.income | vnd }} − tiết kiệm {{ b.goal | vnd }}
+            @if (b.fixed) {
+            − cố định {{ b.fixed | vnd }}
+            }
+        </dd>
+    </div>
+    <div class="figure figure--main" [class.figure--over]="b.remaining < 0">
+        <dt class="figure__label">
+            {{ b.remaining < 0 ? 'Đã tiêu lố' : 'Còn được tiêu' }} </dt>
+        <dd class="figure__value">
+            {{ (b.remaining < 0 ? -b.remaining : b.remaining) | vnd }} </dd>
+                @if (b.perDay !== null) {
+        <dd class="figure__hint">
+            ≈ {{ b.perDay | vnd }}/ngày · {{ b.daysLeft }} ngày còn lại
+        </dd>
+        }
+    </div>
+</dl>
+
+@if (b.usedPercent !== null) {
+<div class="usage">
+    <app-progress-bar [value]="b.usedPercent" [color]="b.remaining < 0 ? 'var(--expense)' : 'var(--accent)'"
+        [attr.aria-label]="'Đã dùng ' + usedLabel() + ' hạn mức'" />
+    <p class="usage__label">
+        {{ b.fixed ? 'Hạn mức đã tiêu' : 'Đã tiêu' }}
+        {{ b.spent | vnd }} / {{ b.limit | vnd }} ({{ usedLabel() }})
+    </p>
+</div>
+}
+
+@if (status(); as s) {
+<p class="status" [class.status--warn]="s.tone === 'warn'">
+    {{ s.text }}
+</p>
+}
+
+<button type="button" class="btn btn--ghost btn--sm edit" (click)="startEdit()">
+    Sửa mục tiêu
+</button>
+} @else {
+<p class="empty">
+    Đặt số tiền muốn tiết kiệm mỗi tháng để biết bạn còn được tiêu bao nhiêu
+    (tổng thu − tiền tiết kiệm − đã chi).
+</p>
+<button type="button" class="btn btn--primary btn--sm edit" (click)="startEdit()">
+    Đặt mục tiêu tiết kiệm
+</button>
+}

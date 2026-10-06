@@ -1,21 +1,35 @@
+@if (recurring().length) {
+<section class="day day--recurring">
+    <header class="day__header">
+        <h3 class="day__title">Khoản cố định hằng tháng</h3>
+        <span class="day__hint">Khoản cố định</span>
+    </header>
+    <ul class="day__items">
+        @for (tx of recurring(); track tx.id) {
+        <li>
+            <app-transaction-item [transaction]="tx" />
+        </li>
+        }
+    </ul>
+</section>
+}
+
 @for (group of groups(); track group.date) {
-    <section class="day">
-        <header class="day__header">
-            <h3 class="day__title">{{ group.date | dayLabel }}</h3>
-        </header>
-        <ul class="day__items">
-            @for (tx of group.items; track tx.id) {
-                <li>
-                    <app-transaction-item
-                        [transaction]="tx"
-                        [active]="tx.id === activeId()"
-                        (edit)="edit.emit($event)"
-                        (remove)="remove.emit($event)"
-                    />
-                </li>
-            }
-        </ul>
-    </section>
-} @empty {
-    <app-empty-state icon="🧾" [message]="emptyMessage()" />
+<section class="day">
+    <header class="day__header">
+        <h3 class="day__title">{{ group.date | dayLabel }}</h3>
+    </header>
+    <ul class="day__items">
+        @for (tx of group.items; track tx.id) {
+        <li>
+            <app-transaction-item [transaction]="tx" [active]="tx.id === activeId()" (edit)="edit.emit($event)"
+                (remove)="remove.emit($event)" />
+        </li>
+        }
+    </ul>
+</section>
+}
+
+@if (!transactions().length) {
+<app-empty-state icon="🧾" [message]="emptyMessage()" />
 }

@@ -16,7 +16,10 @@ interface DayGroup {
     items: Transaction[];
 }
 
-/** Danh sách giao dịch nhóm theo ngày. */
+/**
+ * Danh sách giao dịch: khoản cố định hằng tháng gom vào một nhóm riêng ở
+ * đầu, giao dịch thường nhóm theo ngày bên dưới.
+ */
 @Component({
     selector: 'app-transaction-list',
     imports: [TransactionItem, EmptyState, DayLabelPipe],
@@ -33,9 +36,18 @@ export class TransactionList {
     readonly edit = output<Transaction>();
     readonly remove = output<Transaction>();
 
+    /** Khoản cố định (tự tính ra mỗi tháng), theo thứ tự ngày trong tháng. */
+    protected readonly recurring = computed(() =>
+        this.transactions()
+            .filter((t) => t.recurringId)
+            .sort((a, b) => a.date.localeCompare(b.date)),
+    );
+
+    /** Giao dịch thường, nhóm theo ngày (giữ thứ tự ngày giảm dần). */
     protected readonly groups = computed<DayGroup[]>(() => {
         const byDate = new Map<string, DayGroup>();
         for (const t of this.transactions()) {
+            if (t.recurringId) continue;
             const group = byDate.get(t.date) ?? { date: t.date, items: [] };
             group.items.push(t);
             byDate.set(t.date, group);

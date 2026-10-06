@@ -37,6 +37,18 @@
     [expenseCount]="expenseCount()"
 />
 
+<app-card heading="Mục tiêu tiết kiệm" subheading="Hạn mức chi tiêu tháng này">
+    <app-savings-goal-card
+        [goal]="savingsGoal()"
+        [month]="store.selectedMonth()"
+        [income]="store.totalIncome()"
+        [expense]="store.totalExpense()"
+        [fixedExpense]="fixedExpense()"
+        [error]="savings.error()"
+        (save)="savings.set(store.selectedMonth(), $event)"
+    />
+</app-card>
+
 <div class="layout">
     <div class="layout__side">
         <app-card [heading]="editing() ? 'Sửa giao dịch' : 'Thêm giao dịch'">

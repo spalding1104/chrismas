@@ -5,8 +5,25 @@
 }
 
 .day__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-2);
     padding: 0 var(--space-3) var(--space-2);
     border-bottom: 1px solid var(--border);
+}
+
+.day__hint {
+    color: var(--ink-muted);
+    font-size: var(--text-xs);
+}
+
+/* Nhóm khoản cố định: nền nhạt để tách khỏi các ngày bên dưới. */
+.day--recurring {
+    padding: var(--space-3) 0 var(--space-1);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--accent-soft) 50%, transparent);
 }
 
 .day__title {

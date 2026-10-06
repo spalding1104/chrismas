@@ -75,3 +75,15 @@ CREATE TABLE IF NOT EXISTS recurring_items (
 
 CREATE INDEX IF NOT EXISTS recurring_items_user_idx
   ON recurring_items (user_id, created_at);
+
+-- Mục tiêu tiết kiệm mỗi tháng. Một dòng ở tháng X áp dụng cho X và các
+-- tháng sau, cho tới dòng kế tiếp; amount = 0 nghĩa là bỏ mục tiêu từ tháng
+-- đó. Đặt lại ở tháng X xóa các dòng sau X (xem src/savings-goals.ts) nên
+-- các tháng trước X giữ nguyên mục tiêu cũ.
+CREATE TABLE IF NOT EXISTS savings_goals (
+  user_id    uuid        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  month      char(7)     NOT NULL,
+  amount     bigint      NOT NULL CHECK (amount >= 0),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, month)
+);
