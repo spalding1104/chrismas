@@ -121,6 +121,14 @@ export const CATEGORIES: readonly Category[] = [
         noteHint: 'VD: Claude, Spotify, iCloud, thẻ điện thoại',
     },
     {
+        id: 'pets',
+        name: 'Thú cưng',
+        icon: '🐾',
+        color: 'var(--series-other)',
+        type: 'expense',
+        noteHint: 'VD: Thức ăn, cát vệ sinh, tiêm phòng, khám thú y',
+    },
+    {
         id: 'other-expense',
         name: 'Chi khác',
         icon: '📦',

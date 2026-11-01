@@ -28,7 +28,7 @@ thế nào, tính ra sao và code nằm ở đâu.
 - **Code:** `src/app/core/auth/`, `src/app/features/auth/`,
   `server/src/auth.ts`
 
-### 1.2. Quên mật khẩu ⭐ (mới)
+### 1.2. Quên mật khẩu
 
 - **Chức năng:** đặt lại mật khẩu khi quên, không cần gửi email (app dành cho
   một người dùng).
@@ -113,7 +113,7 @@ thế nào, tính ra sao và code nằm ở đâu.
   `src/app/core/utils/budget.util.ts`, `server/src/savings-goals.ts`
   (bảng `savings_goals`)
 
-### 2.4. Thêm / Sửa / Xóa giao dịch
+### 2.4. Thêm / Sửa / Xóa giao dịch ⭐ (mới)
 
 - **Chức năng:** ghi lại một khoản thu hoặc chi.
 - **Cách dùng:**
@@ -132,7 +132,7 @@ thế nào, tính ra sao và code nằm ở đâu.
 - **Danh mục:**
   - Thu: Lương, Thưởng, Làm thêm, Thu khác.
   - Chi: Ăn uống, Đi lại, Nhà & hóa đơn, Mua sắm, Sức khỏe, Học tập, Giải
-    trí, Thể thao, Từ thiện, Dịch vụ & thuê bao, Chi khác.
+    trí, Thể thao, Từ thiện, Dịch vụ & thuê bao, Thú cưng, Chi khác.
   - Muốn thêm danh mục thì sửa `src/app/core/constants/categories.ts`.
 - **Chú thích:** dữ liệu chỉ cập nhật trên màn hình sau khi server lưu thành
   công. Lỗi kết nối sẽ hiện thông báo kèm nút **Thử lại**.
@@ -279,6 +279,9 @@ phê…).
 ### 5.2. Thiết kế & khả năng tiếp cận
 
 - Dùng tốt trên điện thoại và máy tính.
+- Thanh cuộn được ẩn ở mọi nơi (trang và các bảng cuộn ngang) nhưng vẫn cuộn
+  được bằng chuột, bàn phím và cảm ứng. Tắt bằng cách xóa khối `scrollbar`
+  trong `src/styles.scss`.
 - Toàn bộ màu, khoảng cách, cỡ chữ lấy từ design token
   (`src/styles/_tokens.scss`). Lệnh `npm run lint:styles` báo lỗi khi code
   dùng giá trị cứng.
