@@ -21,3 +21,6 @@ services:
         value: "24"
       - key: DATABASE_URL
         sync: false
+      # Mã bí mật (>= 12 ký tự) cho trang Quên mật khẩu; bỏ trống thì trang đó tắt.
+      - key: RESET_SECRET
+        sync: false

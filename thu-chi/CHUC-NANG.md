@@ -122,7 +122,9 @@ thế nào, tính ra sao và code nằm ở đâu.
   - Ngày mặc định là hôm nay nếu đang xem tháng hiện tại, còn lại là ngày 1
     của tháng đang xem.
   - Muốn sửa một giao dịch thì bấm **Sửa** ở danh sách: form chuyển thành "Sửa
-    giao dịch" và giao dịch đó được tô đậm. Bấm **Xóa** để xóa.
+    giao dịch" và giao dịch đó được tô đậm. Trang tự cuộn tới form và đặt con
+    trỏ vào ô số tiền để sửa ngay (trên điện thoại, bàn phím mở luôn). Bấm
+    **Xóa** để xóa.
 - **Nhập số tiền nhanh:**
   - Ô số tiền tự thêm dấu chấm ngăn cách hàng nghìn khi gõ (`50.000`). Dấu
     phẩy dùng cho phần thập phân, gõ dấu chấm sẽ tự đổi thành dấu phẩy.
@@ -131,8 +133,9 @@ thế nào, tính ra sao và code nằm ở đâu.
   - Tối đa 9 chữ số (999.999.999đ).
 - **Danh mục:**
   - Thu: Lương, Thưởng, Làm thêm, Thu khác.
-  - Chi: Ăn uống, Đi lại, Nhà & hóa đơn, Mua sắm, Sức khỏe, Học tập, Giải
-    trí, Thể thao, Từ thiện, Dịch vụ & thuê bao, Thú cưng, Chi khác.
+  - Chi: Ăn uống, Đi lại, Nhà & hóa đơn, Mua sắm, Sức khỏe, Làm đẹp & cá
+    nhân, Học tập, Giải trí, Du lịch, Thể thao, Từ thiện, Dịch vụ & thuê bao,
+    Thú cưng, Chi khác.
   - Muốn thêm danh mục thì sửa `src/app/core/constants/categories.ts`.
 - **Chú thích:** dữ liệu chỉ cập nhật trên màn hình sau khi server lưu thành
   công. Lỗi kết nối sẽ hiện thông báo kèm nút **Thử lại**.

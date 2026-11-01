@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import type { Mock } from 'vitest';
 
-import { TransactionDraft } from '../../../core/models';
+import { Transaction, TransactionDraft } from '../../../core/models';
 import { TransactionForm } from './transaction-form';
 
 describe('TransactionForm', () => {
@@ -246,5 +247,58 @@ describe('TransactionForm', () => {
         expect(note().placeholder).toBe('VD: Đổ xăng, Grab, gửi xe');
         await pick('Dịch vụ & thuê bao');
         expect(note().placeholder).toContain('Spotify');
+    });
+
+    describe('when editing', () => {
+        const tx = {
+            id: 'a',
+            type: 'expense',
+            amount: 50_000,
+            categoryId: 'food',
+            note: 'Ăn trưa',
+            date: '2026-10-05',
+        } as Transaction;
+        let scrollIntoView: Mock<() => void>;
+
+        beforeEach(() => {
+            scrollIntoView = vi.fn<() => void>();
+            el.scrollIntoView = scrollIntoView;
+        });
+
+        it('focuses the amount input and scrolls the form into view', async () => {
+            fixture.componentRef.setInput('editing', tx);
+            await fixture.whenStable();
+
+            expect(document.activeElement).toBe(amountInput());
+            expect(scrollIntoView).toHaveBeenCalledOnce();
+            expect(amountInput().value).toBe('50.000');
+        });
+
+        it('does not grab focus again when only the date default changes', async () => {
+            fixture.componentRef.setInput('editing', tx);
+            await fixture.whenStable();
+            (document.activeElement as HTMLElement).blur();
+
+            fixture.componentRef.setInput('defaultDate', '2026-11-01');
+            await fixture.whenStable();
+            expect(document.activeElement).not.toBe(amountInput());
+            expect(scrollIntoView).toHaveBeenCalledOnce();
+        });
+
+        it('moves focus again when another transaction is chosen', async () => {
+            fixture.componentRef.setInput('editing', tx);
+            await fixture.whenStable();
+            (document.activeElement as HTMLElement).blur();
+
+            fixture.componentRef.setInput('editing', { ...tx, id: 'b' });
+            await fixture.whenStable();
+            expect(document.activeElement).toBe(amountInput());
+            expect(scrollIntoView).toHaveBeenCalledTimes(2);
+        });
+
+        it('does not steal focus when adding a new transaction', async () => {
+            expect(document.activeElement).not.toBe(amountInput());
+            expect(scrollIntoView).not.toHaveBeenCalled();
+        });
     });
 });

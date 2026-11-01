@@ -81,6 +81,14 @@ export const CATEGORIES: readonly Category[] = [
         noteHint: 'VD: Khám bệnh, thuốc, bảo hiểm',
     },
     {
+        id: 'beauty',
+        name: 'Làm đẹp & cá nhân',
+        icon: '💇',
+        color: 'var(--series-other)',
+        type: 'expense',
+        noteHint: 'VD: Cắt tóc, mỹ phẩm, spa, dầu gội',
+    },
+    {
         id: 'education',
         name: 'Học tập',
         icon: '📚',
@@ -94,7 +102,15 @@ export const CATEGORIES: readonly Category[] = [
         icon: '🎬',
         color: 'var(--series-7)',
         type: 'expense',
-        noteHint: 'VD: Xem phim, du lịch, game',
+        noteHint: 'VD: Xem phim, game, cà phê với bạn',
+    },
+    {
+        id: 'travel',
+        name: 'Du lịch',
+        icon: '✈️',
+        color: 'var(--series-other)',
+        type: 'expense',
+        noteHint: 'VD: Vé máy bay, khách sạn, tour, tiền ăn khi đi chơi',
     },
     {
         id: 'sports',

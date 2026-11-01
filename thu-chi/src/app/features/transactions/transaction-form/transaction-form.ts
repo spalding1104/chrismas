@@ -1,6 +1,9 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
+    Injector,
+    afterNextRender,
     computed,
     effect,
     inject,
@@ -55,6 +58,10 @@ export class TransactionForm {
     readonly cancelled = output<void>();
 
     private readonly fb = inject(NonNullableFormBuilder);
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly injector = inject(Injector);
+    /** Giao dịch đã được đưa con trỏ tới, để không giành focus lần nữa. */
+    private focusedId: string | null = null;
 
     protected readonly form = this.fb.group({
         type: this.fb.control<TransactionType>('expense'),
@@ -127,6 +134,8 @@ export class TransactionForm {
             untracked(() => {
                 this.submitted.set(false);
                 if (tx) {
+                    if (tx.id !== this.focusedId) this.focusEditor();
+                    this.focusedId = tx.id;
                     const { type, amount, categoryId, date: txDate, note } = tx;
                     this.form.setValue({
                         type,
@@ -136,10 +145,35 @@ export class TransactionForm {
                         note,
                     });
                 } else {
+                    this.focusedId = null;
                     this.resetForm(date);
                 }
             });
         });
+    }
+
+    /**
+     * Bấm Sửa ở danh sách: cuộn tới card form rồi đặt con trỏ vào ô số tiền,
+     * để sửa được ngay mà không phải tự tìm form (nhất là trên điện thoại,
+     * nơi form nằm ngoài màn hình).
+     */
+    private focusEditor(): void {
+        afterNextRender(
+            () => {
+                const host = this.host.nativeElement;
+                const reduceMotion = matchMedia?.(
+                    '(prefers-reduced-motion: reduce)',
+                )?.matches;
+                (host.closest('app-card') ?? host).scrollIntoView?.({
+                    behavior: reduceMotion ? 'auto' : 'smooth',
+                    block: 'start',
+                });
+                host.querySelector<HTMLInputElement>('#tx-amount')?.focus({
+                    preventScroll: true,
+                });
+            },
+            { injector: this.injector },
+        );
     }
 
     protected selectCategory(id: string): void {
