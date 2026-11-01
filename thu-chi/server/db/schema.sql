@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS sessions_user_idx ON sessions (user_id);
 
+-- Bảng token đặt lại mật khẩu qua email đã bỏ (xem RESET_SECRET trong auth.ts).
+DROP TABLE IF EXISTS password_resets;
+
 CREATE TABLE IF NOT EXISTS transactions (
   id          uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
   type        text        NOT NULL CHECK (type IN ('income', 'expense')),

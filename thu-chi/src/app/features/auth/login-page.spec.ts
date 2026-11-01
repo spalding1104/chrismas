@@ -60,6 +60,13 @@ describe('LoginPage', () => {
         expect(TestBed.inject(Router).navigateByUrl).toHaveBeenCalledWith('/');
     });
 
+    it('offers the forgot-password link only when logging in', async () => {
+        const link = () => el.querySelector('a[href="/quen-mat-khau"]');
+        expect(link()).not.toBeNull();
+        await switchTo('Đăng ký');
+        expect(link()).toBeNull();
+    });
+
     it('does not submit an invalid form', async () => {
         type('#auth-email', 'khong-phai-email');
         await submit();

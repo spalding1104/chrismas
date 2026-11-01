@@ -75,6 +75,9 @@
                     Ít nhất {{ minPasswordLength }} ký tự.
                 </p>
             }
+            @if (mode() === 'login') {
+                <a class="link" routerLink="/quen-mat-khau">Quên mật khẩu?</a>
+            }
         </div>
 
         @if (mode() === 'register') {

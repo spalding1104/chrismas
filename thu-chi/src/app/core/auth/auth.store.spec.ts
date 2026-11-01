@@ -60,4 +60,37 @@ describe('AuthStore', () => {
         await expect(loggingOut).rejects.toBeTruthy();
         expect(auth.user()).toBeNull();
     });
+
+    const reset = {
+        email: 'a@test.vn',
+        secret: 'ma-bi-mat-123',
+        password: 'matkhau123',
+    };
+
+    it('signs out after resetting the password', async () => {
+        const loggingIn = auth.login({ email: 'a@test.vn', password: 'cu' });
+        http.expectOne(`${AUTH_API}/login`).flush(alice);
+        await loggingIn;
+
+        const resetting = auth.resetPassword(reset);
+        const req = http.expectOne(`${AUTH_API}/reset-password`);
+        expect(req.request.body).toEqual(reset);
+        req.flush(null, { status: 204, statusText: 'No Content' });
+        await resetting;
+        expect(auth.user()).toBeNull();
+    });
+
+    it('keeps the user when the secret is rejected', async () => {
+        const loggingIn = auth.login({ email: 'a@test.vn', password: 'cu' });
+        http.expectOne(`${AUTH_API}/login`).flush(alice);
+        await loggingIn;
+
+        const resetting = auth.resetPassword({ ...reset, secret: 'sai' });
+        http.expectOne(`${AUTH_API}/reset-password`).flush(
+            { error: 'Mã bí mật không đúng' },
+            { status: 403, statusText: 'Forbidden' },
+        );
+        await expect(resetting).rejects.toBeTruthy();
+        expect(auth.user()).toEqual(alice);
+    });
 });

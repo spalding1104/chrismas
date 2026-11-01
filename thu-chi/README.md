@@ -29,7 +29,8 @@ Backend chạy thẳng file `.ts` bằng Node ≥ 22.18 (type stripping), không
 - **Tài khoản đầu tiên đăng ký** tự nhận toàn bộ giao dịch tạo trước khi có chức năng đăng nhập.
 - Mật khẩu tối thiểu 8 ký tự, băm bằng scrypt (có salt riêng). Phiên đăng nhập là cookie `HttpOnly` sống 30 ngày; database chỉ lưu hash của token.
 - Sai mật khẩu 10 lần liên tiếp thì email đó bị khóa đăng nhập 15 phút.
-- Chưa có chức năng quên mật khẩu / đổi mật khẩu.
+- **Quên mật khẩu** (`/quen-mat-khau`): không gửi email. Nhập email, mã bí mật và mật khẩu mới; mã bí mật là biến `RESET_SECRET` (≥ 12 ký tự) tự đặt trong `server/.env` hoặc trên Render. Sai mã 10 lần thì khóa 15 phút.
+- Không dùng được trang web: `npm run db:reset-password -- ban@email.com` trong `server/`, nhập mật khẩu mới khi được hỏi. Muốn đổi trên database production thì đặt `DATABASE_URL` của Neon trước khi chạy (biến có sẵn trong shell được ưu tiên hơn file `.env`).
 - Khi deploy thật, đặt `NODE_ENV=production` để cookie có cờ `Secure` (chỉ gửi qua HTTPS).
 
 ### API
@@ -42,6 +43,7 @@ Mọi API `/api/transactions` cần đăng nhập (không thì trả 401) và ch
 | POST   | `/api/auth/login`              | Đăng nhập (body: `email, password`)      |
 | POST   | `/api/auth/logout`             | Đăng xuất                                |
 | GET    | `/api/auth/me`                 | Người đang đăng nhập                     |
+| POST   | `/api/auth/reset-password`     | Đặt lại mật khẩu (body: `email, secret, password`) |
 | GET    | `/api/transactions`            | Tất cả giao dịch, mới nhất trước         |
 | POST   | `/api/transactions`            | Thêm (body: `type, amount, categoryId, note, date`) |
 | PUT    | `/api/transactions/:id`        | Sửa                                      |
@@ -72,6 +74,7 @@ domain và cookie đăng nhập hoạt động không cần CORS.
 3. Khi Render hỏi `DATABASE_URL`, dán connection string của Neon vào. Bảng
    được tạo tự động lúc server khởi động.
 4. Mở link `https://thu-chi-….onrender.com` và đăng ký tài khoản.
+5. **Quên mật khẩu**: thêm biến `RESET_SECRET` (chuỗi ngẫu nhiên ≥ 12 ký tự, tự đặt) vào tab Environment trên Render. Thiếu biến này thì trang Quên mật khẩu bị tắt.
 
 Gói free của Render sẽ tạm ngủ server sau khoảng 15 phút không có truy cập,
 nên lần mở đầu tiên sau đó mất chừng 30–60 giây.
@@ -118,7 +121,7 @@ src/app/
 │   ├── dashboard/             # Trang tháng (container) – nối store với UI
 │   ├── year-report/           # Trang thống kê năm (container)
 │   ├── accounting/            # Phân hệ Kế toán: form phương án, báo cáo, what-if
-│   ├── auth/                  # Trang đăng nhập / đăng ký
+│   ├── auth/                  # Trang đăng nhập / đăng ký, quên / đặt lại mật khẩu
 │   ├── summary/               # SummaryOverview, CategoryChart
 │   └── transactions/          # TransactionForm, TransactionList, TransactionItem
 ├── app.ts                     # Khung trang: header (Chi tiêu | Kế toán), footer

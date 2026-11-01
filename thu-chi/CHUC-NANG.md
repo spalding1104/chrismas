@@ -28,6 +28,26 @@ thế nào, tính ra sao và code nằm ở đâu.
 - **Code:** `src/app/core/auth/`, `src/app/features/auth/`,
   `server/src/auth.ts`
 
+### 1.2. Quên mật khẩu ⭐ (mới)
+
+- **Chức năng:** đặt lại mật khẩu khi quên, không cần gửi email (app dành cho
+  một người dùng).
+- **Cách dùng:** ở trang đăng nhập, bấm **Quên mật khẩu?**, nhập email, **mã
+  bí mật**, mật khẩu mới (hai lần) rồi đăng nhập lại. Mã bí mật là biến môi
+  trường `RESET_SECRET` (ít nhất 12 ký tự) do chủ ứng dụng tự đặt: trong
+  `server/.env` khi chạy trên máy, tab Environment khi chạy trên Render. Chưa
+  đặt thì trang báo "Server chưa đặt RESET_SECRET". Không cần trang web cũng
+  đổi được bằng lệnh `npm run db:reset-password -- <email>` trong `server/`.
+- **Chú thích:**
+  - Ai biết mã bí mật thì đặt lại được mật khẩu của bất kỳ tài khoản nào, nên
+    hãy giữ kín và đặt dài, khó đoán.
+  - Nhập sai mã 10 lần thì khóa chức năng này 15 phút (đếm chung mọi email).
+  - Đổi mật khẩu xong thì mọi thiết bị bị đăng xuất và khóa đăng nhập của email
+    đó (nếu có) được gỡ.
+  - So sánh mã theo kiểu thời gian không đổi (`timingSafeEqual`).
+- **Code:** `src/app/features/auth/forgot-password-page.ts`,
+  `server/src/auth.ts`, `server/src/reset-password.ts`
+
 ---
 
 ## 2. Trang Tháng (trang chính `/`)
@@ -52,7 +72,7 @@ thế nào, tính ra sao và code nằm ở đâu.
   nhập", hoặc "Chi vượt thu X%" nếu chi nhiều hơn thu.
 - **Code:** `src/app/features/summary/summary-overview/`
 
-### 2.3. Mục tiêu tiết kiệm & hạn mức chi tiêu ⭐ (mới)
+### 2.3. Mục tiêu tiết kiệm & hạn mức chi tiêu
 
 - **Chức năng:** đặt số tiền muốn tiết kiệm mỗi tháng, rồi xem tháng này còn
   được tiêu bao nhiêu mà vẫn đạt mục tiêu.
@@ -286,6 +306,7 @@ liệu của tài khoản đang dùng.
 | Đường dẫn | Chức năng |
 |---|---|
 | `POST /api/auth/register`, `/login`, `/logout`, `GET /api/auth/me` | Tài khoản |
+| `POST /api/auth/reset-password` (kèm `secret`) | Đặt lại mật khẩu |
 | `GET/POST /api/transactions`, `PUT/DELETE /api/transactions/:id` | Giao dịch |
 | `DELETE /api/transactions/sample` | Xóa dữ liệu mẫu |
 | `GET/POST /api/recurring`, `PUT /:id` (kèm `fromMonth`), `DELETE /:id?from=` | Khoản cố định |

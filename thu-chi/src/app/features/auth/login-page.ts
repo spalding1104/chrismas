@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -14,19 +13,18 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthStore } from '../../core/auth';
 import { SegmentOption, SegmentedControl } from '../../shared/ui';
+import { MIN_PASSWORD_LENGTH, messageOf, newPasswordRules } from './auth-form';
 
 type Mode = 'login' | 'register';
-
-export const MIN_PASSWORD_LENGTH = 8;
 
 /** Trang đăng nhập / đăng ký (container). */
 @Component({
     selector: 'app-login-page',
-    imports: [ReactiveFormsModule, SegmentedControl],
+    imports: [ReactiveFormsModule, RouterLink, SegmentedControl],
     templateUrl: './login-page.html',
     styleUrl: './login-page.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,17 +49,8 @@ export class LoginPage {
     // Quy tắc chỉ áp dụng khi đăng ký; đăng nhập không lộ quy tắc mật khẩu.
     private readonly registerRules = (
         group: AbstractControl,
-    ): ValidationErrors | null => {
-        if (this.mode() !== 'register') return null;
-        const { password, confirm } = group.value as {
-            password: string;
-            confirm: string;
-        };
-        const errors: ValidationErrors = {};
-        if (password.length < MIN_PASSWORD_LENGTH) errors['tooShort'] = true;
-        if (confirm !== password) errors['mismatch'] = true;
-        return Object.keys(errors).length ? errors : null;
-    };
+    ): ValidationErrors | null =>
+        this.mode() === 'register' ? newPasswordRules(group) : null;
 
     protected readonly form = this.fb.group(
         {
@@ -112,15 +101,4 @@ export class LoginPage {
             this.submitting.set(false);
         }
     }
-}
-
-function messageOf(err: unknown): string {
-    if (err instanceof HttpErrorResponse) {
-        if (err.status === 0 || err.status >= 500) {
-            return 'Không kết nối được máy chủ. Kiểm tra backend đã chạy chưa.';
-        }
-        const message = (err.error as { error?: unknown } | null)?.error;
-        if (typeof message === 'string') return message;
-    }
-    return 'Có lỗi xảy ra, vui lòng thử lại.';
 }

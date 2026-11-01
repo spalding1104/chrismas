@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard, guestGuard } from './core/auth';
 import { AccountingPage } from './features/accounting/accounting-page';
+import { ForgotPasswordPage } from './features/auth/forgot-password-page';
 import { LoginPage } from './features/auth/login-page';
 import { DashboardPage } from './features/dashboard/dashboard-page';
 import { SpendingLayout } from './features/spending/spending-layout';
@@ -13,6 +14,12 @@ export const routes: Routes = [
         component: LoginPage,
         canActivate: [guestGuard],
         title: 'Đăng nhập · Sổ Thu Chi',
+    },
+    {
+        path: 'quen-mat-khau',
+        component: ForgotPasswordPage,
+        canActivate: [guestGuard],
+        title: 'Quên mật khẩu · Sổ Thu Chi',
     },
     {
         path: 'ke-toan',

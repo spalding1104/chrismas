@@ -30,6 +30,21 @@ const MAX_FAILURES = 10;
 const LOCK_MS = 15 * 60 * 1000;
 const failures = new Map<string, { count: number; until: number }>();
 
+// Quên mật khẩu: không gửi email (app một người dùng). Người chủ đặt biến môi
+// trường RESET_SECRET; ai biết mã đó mới đặt lại được mật khẩu bất kỳ tài khoản.
+// Không đặt (hoặc ngắn hơn MIN_SECRET_LENGTH) thì chức năng tắt hẳn.
+const MIN_SECRET_LENGTH = 12;
+const rawSecret = process.env['RESET_SECRET'];
+const RESET_SECRET =
+    rawSecret && rawSecret.length >= MIN_SECRET_LENGTH ? rawSecret : null;
+if (rawSecret && !RESET_SECRET) {
+    console.warn(
+        `RESET_SECRET ngắn hơn ${MIN_SECRET_LENGTH} ký tự nên bị bỏ qua.`,
+    );
+}
+// Đếm chung mọi email: kẻ dò mã có thể đổi email liên tục để né khóa riêng.
+let resetFailures = { count: 0, until: 0 };
+
 // ---------- Mật khẩu (scrypt có sẵn trong Node) ----------
 
 const KEY_LENGTH = 64;
@@ -87,6 +102,21 @@ async function verifyPassword(
 
 // Dùng khi email không tồn tại, để thời gian phản hồi giống như sai mật khẩu.
 const DUMMY_HASH = await hashPassword(randomBytes(16).toString('hex'));
+
+/** Đổi mật khẩu; mọi phiên đăng nhập của tài khoản đều hết hiệu lực. */
+export async function setPassword(
+    userId: string,
+    password: string,
+): Promise<string | undefined> {
+    const { rows } = await pool.query<{ email: string }>(
+        `WITH gone_sessions AS (DELETE FROM sessions WHERE user_id = $1)
+         UPDATE users SET password_hash = $2 WHERE id = $1 RETURNING email`,
+        [userId, await hashPassword(password)],
+    );
+    const email = rows[0]?.email;
+    if (email) failures.delete(email);
+    return email;
+}
 
 // ---------- Phiên đăng nhập ----------
 
@@ -153,16 +183,21 @@ const email = z
     .max(254)
     .pipe(z.email('Email không hợp lệ'));
 
-const registerSchema = z.object({
-    email,
-    password: z
-        .string()
-        .min(8, 'Mật khẩu cần ít nhất 8 ký tự')
-        .max(200, 'Mật khẩu quá dài'),
-});
+export const newPassword = z
+    .string()
+    .min(8, 'Mật khẩu cần ít nhất 8 ký tự')
+    .max(200, 'Mật khẩu quá dài');
+
+const registerSchema = z.object({ email, password: newPassword });
 
 // Không lộ quy tắc mật khẩu khi đăng nhập.
 const loginSchema = z.object({ email, password: z.string().min(1).max(200) });
+
+const resetSchema = z.object({
+    email,
+    secret: z.string().min(1).max(200),
+    password: newPassword,
+});
 
 export const authRouter = Router();
 
@@ -258,6 +293,48 @@ authRouter.post('/logout', async (req, res) => {
 
 authRouter.get('/me', requireAuth, (_req, res) => {
     res.json(currentUser(res));
+});
+
+const sameSecret = (a: string, b: string) =>
+    timingSafeEqual(Buffer.from(hashToken(a)), Buffer.from(hashToken(b)));
+
+authRouter.post('/reset-password', async (req, res) => {
+    const input = resetSchema.safeParse(req.body);
+    if (!input.success) return invalid(res, input.error);
+    if (!RESET_SECRET) {
+        res.status(503).json({
+            error: 'Server chưa đặt RESET_SECRET nên chưa đặt lại mật khẩu được.',
+        });
+        return;
+    }
+    if (
+        resetFailures.count >= MAX_FAILURES &&
+        resetFailures.until > Date.now()
+    ) {
+        res.status(429).json({
+            error: 'Nhập sai mã quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+        });
+        return;
+    }
+    if (!sameSecret(input.data.secret, RESET_SECRET)) {
+        const count =
+            (resetFailures.until > Date.now() ? resetFailures.count : 0) + 1;
+        resetFailures = { count, until: Date.now() + LOCK_MS };
+        res.status(403).json({ error: 'Mã bí mật không đúng' });
+        return;
+    }
+
+    const { rows } = await pool.query<{ id: string }>(
+        'SELECT id FROM users WHERE email = $1',
+        [input.data.email],
+    );
+    if (!rows[0]) {
+        res.status(404).json({ error: 'Không có tài khoản với email này' });
+        return;
+    }
+    await setPassword(rows[0].id, input.data.password);
+    resetFailures = { count: 0, until: 0 };
+    res.status(204).end();
 });
 
 function invalid(res: Response, error: z.ZodError): void {

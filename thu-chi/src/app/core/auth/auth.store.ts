@@ -11,6 +11,10 @@ export interface Credentials {
     password: string;
 }
 
+export interface PasswordReset extends Credentials {
+    secret: string;
+}
+
 /**
  * Người dùng đang đăng nhập. Phiên nằm trong cookie HttpOnly do server
  * đặt, nên frontend không bao giờ đọc hay lưu token.
@@ -57,6 +61,17 @@ export class AuthStore {
         } finally {
             this.setUser(null);
         }
+    }
+
+    /**
+     * Đặt lại mật khẩu bằng mã bí mật (RESET_SECRET) của server. Server đã xóa
+     * mọi phiên của tài khoản, nên phải đăng nhập lại.
+     */
+    async resetPassword(reset: PasswordReset): Promise<void> {
+        await firstValueFrom(
+            this.http.post(`${AUTH_API}/reset-password`, reset),
+        );
+        this.setUser(null);
     }
 
     /** Gọi khi server báo phiên đã hết hạn (401). */
